@@ -1,0 +1,101 @@
+body {
+    display: flex; /* 画面全体の配置を調整するための設定 */
+    justify-content: center; /* コンテンツを中央に配置 */
+    padding: 0px 10px; /* 画面の上下に 0px の余白、左右に10pxの余白を設定 */
+}
+
+.container {
+    max-width: 768px; /* コンテンツの最大幅を768pxに制限 */
+    width: 100%; /* コンテンツが幅いっぱいに広がるように設定 */
+    margin: 0 auto; /* コンテンツを中央に配置 */
+}
+
+h1{
+    color: #C82500; /* 文字色 */
+    font-family: "WDXL Lubrifont SC", sans-serif; /* 文字のフォント*/
+    font-weight: bold; /* 文字の太さ(太い) */
+    font-style: normal; /* 文字の表示形式(普通) */
+    font-size: 3rem; /* 文字の大きさ */
+    text-align: center; /* 中央配置 */
+
+    padding: 0.5rem 1rem; /* 要素内側の上下に 0.5rem、左右に 1rem の余白 */
+    border-left: 20px Double; /* 要素境界の左端に幅 20px の二重線 */
+    border-right: 20px Double; /* 要素境界の右端に幅 20px の二重線 */
+    border-top: 5px solid; /* 要素境界の上部に実線 */
+    border-bottom: 5px solid; /* 要素境界の下部に実線 */
+}
+
+h2{
+    color: #64db24; /* 文字色 */
+    font-family: "WDXL Lubrifont SC", sans-serif; /* 文字のフォント*/
+    font-weight: normal; /* 文字の太さ(普通) */
+    font-style: normal; /* 文字の表示形式(普通) */
+    font-size: 2rem; /* 文字の大きさ */
+
+    padding-left: 10px; /* 要素内側の左部に 10px の余白 */
+    border-left: 15px solid; /* 要素境界の左端に幅 20px の実線 */
+    border-bottom: 3px dashed; /* 要素境界の下端に幅 3px の破線 */
+    margin-top: 4rem; /* 文字上側に 4rem の余白 */
+}
+
+h3{
+    color: #444444; /* 文字色 */
+    font-family: "WDXL Lubrifont SC", sans-serif; /* 文字のフォント */
+    font-weight: bold; /* 文字の太さ(太い) */
+    font-style: normal; /* 文字の表示形式(普通) */
+    font-size: 1.5rem; /* 文字の大きさ */
+
+    padding: 0.5rem 0rem; /* 要素内側の上下に 0.5rem、左右に 0rem の余白 */
+    padding-left: 10px; /* 要素内側の左部に 10px の余白 */
+    border-left: 15px solid; /* 要素境界の左部に 15px の実線 */
+    margin-top: 3rem; /* 文字上側に 3rem の余白 */
+    background-color: #dddddd; /* 背景色 */
+}
+
+h4{
+    font-family: "WDXL Lubrifont SC", sans-serif; /* 文字のフォント */
+    font-weight: bold; /* 文字の太さ(太い) */
+    font-style: normal; /* 文字の表示形式(普通) */
+    font-size: 1.5rem; /* 文字の大きさ */
+
+    padding-top: 0.5rem 0rem; /* 要素内側の上下に 0.5rem、左右に 0rem の余白 */
+    border-bottom: 6px double; /* 要素境界の上部に 4px の実線 */
+    margin-top: 3rem; /* 文字上側に 3rem の余白 */
+}
+
+img {
+    display: block; /* 画像をブロック要素に設定 */
+    margin: 0 auto; /* 画像を中央に配置 */
+    border-radius: 10px; /* 画像の角を丸く設定 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* ドロップシャドウを設定 */
+}
+
+html {
+    font-family: "UoqMunThenKhung", serif;
+    font-weight: normal;
+    font-style: normal;
+}
+
+.p-block p {
+    margin: 0.3rem 0;
+}
+.p-block {
+    margin: 1rem 0;
+}
+
+.cyan-strong {
+    color: #00cafe
+}
+
+ul {
+    list-style: none;
+    padding-left: 1rem;
+}
+
+ul li::before {
+    color: #ff5000;
+    margin-right: 0.5rem;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f787"; /* ここを変更する */
+}

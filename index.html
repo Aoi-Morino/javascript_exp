@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>javaScriptでのゲーム開発のすゝめ</title>
+        <link
+        href="https://fonts.googleapis.com/css2?family=UoqMunThenKhung&family=WDXL+Lubrifont+SC&display=swap"
+        rel="stylesheet"
+        >
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        >
+        <link rel="stylesheet" href="main.css" />
+    </head>
+
+<!-- *本文 -->
+    <body>
+        <div class="container">
+            <h1><i class="fa-solid fa-gamepad"></i>JavaScriptでのゲーム開発のすゝめ</h1>
+            <div class="p-block">
+                <p>
+                    本記事では、JavaScriptを使ったゲーム開発の方法を、実際のコードとゲーム画面のスクリーンショット
+                    を織り交ぜながら、できるだけ再現しやすい形で解説していきます。
+                </p>
+                <p>
+                    今回は、おそらく多くの方が一度は遊んだことのある<strong>マインスイーパ</strong>を題材に、実際にゲームを作成してい
+                    きます。
+                </p>
+            </div>
+
+            <img src="TemporaryIMG.jpg" alt="制作したマインスイーパの画像" width="90%" />
+
+            <div class="p-block">
+                <p>
+                    マインスイーパを制作する際に参考にしたサイト：<a href="https://zenn.dev/alkn203/books/phina-tutorial-minesweeper/viewer/phina-tutorial-minesweeper-01">phina.js ゲーム作成解説 マインスイーパー</a>
+                </p>
+                <p class="cyan-strong">
+                    ※サイト内のコードを参考にしていますが、多少の改変を行っている場合があります。
+                </p>
+            </div>
+
+            <h2>事前に知っておきたいこと</h2>
+            <div class="p-block">
+                <p>
+                    プログラミングを学習する際には、あらかじめ前提知識を身につけておくことが、コードの理解において重
+                    要です。
+                </p>
+                <p>そのため、まずはJavaScriptとHTML/CSSについて事前に学習しておきましょう。</p>
+            </div>
+
+            <h3>JavaScriptとは?</h3>
+            <div class="p-block">
+                <p>JavaScriptとは、Webページに動きをつける目的で開発されたプログラミング言語です。</p>
+                <p>
+                    Webブラウザの機能を制御し、動的な操作やアニメーション、ユーザーとのインタラクション、データの
+                    検証や処理などを実現できます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    HTMLやCSSと組み合わせて使用されることが多く、文字や画像にアニメーションをつけたり、Webペー
+                    ジに高度な対話性や視覚効果を追加することができます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    JavaScriptの特徴として、クロスプラットフォーム対応が挙げられます。つまり、異なるオペレーティン
+                    グシステムや環境で動作するWebブラウザ上で、同じJavaScriptコードを実行できるということです。
+                </p>
+                <p>
+                    この特性により、開発者は多様なデバイスやプラットフォームに対応したWebアプリケーションを効率的
+                    に作成することができます。
+                </p>
+                <p>
+                    また、比較的習得のしやすさに定評があるため、多くのプログラミング初学者が学習に励んでいます。
+                </p>
+            </div>
+
+            <h3>HTML/CSSとは?</h3>
+            <div class="p-block">
+            <p>
+                HTMLとは、「ハイパーテキスト・マークアップ・ランゲージ(Hyper Text Markup Language)」の略
+                で、Webページを制作するためのマークアップ言語です。
+            </p>
+            <p>
+                マークアップ言語とは、Webページ内のテキスト情報の構成（タイトル・段落など）や役割をコンピュー
+                タが構造的に理解できるようにするための言語を意味します。
+            </p>
+            </div>
+            <div class="p-block">
+            <p>
+                CSSとは、「カスケーディング・スタイル・シート(Cascading Style Sheets)」の略で、Webページのスタ
+                イルを指定するためのスタイルシート言語です。
+            </p>
+            <p>スタイルシートとは、Webページに限らず、Wordなどで作成された文書のスタイルを制御する技術全般の
+                ことを指します。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    もちろん、HTMLにも、&lt;color&gt;や&lt;font&gt;などの装飾目的のタグや属性があり、HTMLだけでウェブペー
+                    ジのスタイルを制御することもできます。
+                </p>
+                <p>
+                    しかし、HTMLは文書構造を定義するための言語であり、そこにスタイル関連の定義まで追加してしまう
+                    と、HTMLファイルの文書構造が崩れてしまったり、後から修正が必要になった時もページ全てを見直
+                    し、修正することが必要になります。
+                </p>
+                <p>
+                    そんな時に、「スタイルに関してはあのCSSファイルを参照して」と、HTMLファイルに指定しておけ
+                    ば、そのCSSファイル1つ修正すれば、参照しているHTMLファイルは、表示の確認を行うだけで済みま
+                    す。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    JavaScriptを学習する際に、HTML/CSSが記述されていることも多いので、習得しておくことで
+                    JavaScriptの学習にも役立ちます。エンジニアとしての活躍を目指す方は習得して損のないスキルです。
+                </p>
+            </div>
+
+            <h3>JavaScriptでのゲーム開発で便利なライブラリ</h3>
+            <div class="p-block">
+                <p>ライブラリとは、使用頻度の多いプログラムを機能ごとにまとめたファイルのことです。</p>
+                <p>
+                    ライブラリを使わずにゲームを開発することもできますが、ゲーム開発に便利なライブラリを活用することで効率よく高品質のゲームを開発することができます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    そこで、おすすめのavaScriptライブラリを3つ紹介します。ゲーム開発を行う場合、これらのライブラリ
+                    をインストールして使い方を勉強していきましょう。
+                </p>
+            </div>
+
+            <h4>phina.js</h4>
+            <div class="p-block">
+                <p>phina.jsは初心者におすすめのゲームライブラリです。</p>
+                <p>
+                    「アイデアをすぐに形にできる」をコンセプトとして開発されたため、初心者に優しくなっており、script
+                    タグから読み込んだライブラリを組み合わせるだけでゲームを開発できます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    また、phina.jsは日本で開発されたライブラリでドキュメントが日本語のため、分からない箇所を調べやす
+                    く、phina.jsについて書かれた日本語のサイトも豊富にあるため、初心者の方はまずはphina.jsから始めて
+                    みましょう。
+                </p>
+                <p class="cyan-strong">今回は、このphina.jsを利用して開発していきます。</p>
+            </div>
+            <div class="p-block">
+                <p>参考：<a href="https://phinajs.com/">phina.js</a></p>
+            </div>
+
+            <img src="phina-js_img.png" alt="phina.jsのイメージ" width="90%" />
+
+            <h4>Phaser.js</h4>
+            <div class="p-block">
+                <p>
+                    Phaser.jsは代表的なゲームライブラリであり、2Dゲーム開発において多くのエンジニアに使われている人
+                    気のライブラリです。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>豊富な機能を無料で利用できるため、初心者でも利用ハードルが低いのが特徴です。</p>
+                <p>また、有料のプラグインを購入することで機能を追加することもできます。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    また、Phaser.jsはコミュニティが活発なライブラリでもあり、バージョンの更新が継続して行われている
+                    ため、多くのゲーム開発者に愛用されていることが分かります。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>参考：<a href="https://phaser.io/">Phaser.js</a></p>
+            </div>
+
+            <img src="TemporaryIMG.jpg" alt="Phaser.jsのイメージ" width="90%" />
+
+            <h4>PixiJS</h4>
+            <div class="p-block">
+                <p>PixiJSは、2D視覚化に特化した絵画ライブラリです。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    ゲーム開発専用で作られてはいませんが、グラフィック処理の高速化が可能となるためゲーム開発の現場でよく使われています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>参考：<a href="https://pixijs.com/">PixiJS</a></p>
+            </div>
+
+            <img src="TemporaryIMG.jpg" alt="PixiJSのイメージ" width="90%" />
+
+            <h2>ゲームの開発</h2>
+            <div class="p-block">
+                <p>
+                    それでは、ここから実際に、phina.jsを利用してマインスイーパを開発していきましょう。
+                </p>
+                <p>
+                    いくつかの機能に分けて実装し、さらに実装したコードを細かく分割して説明していきます。
+                </p>
+            </div>
+
+            <h3>パネルの実装と配置</h3>
+            <div class="p-block">
+                <p>
+                    ここでは、下のスクリーンショットのようにパネルを並べていきます。
+                </p>
+            </div>
+
+            <img src="TemporaryIMG.jpg" alt="タイルを並べたスクリーンショット" width="90%" />
+            <!-- ここまでで本文終了 -->
+
+        </div>
+    </body>
+</html>
+
