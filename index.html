@@ -5,14 +5,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>javaScriptでのゲーム開発のすゝめ</title>
         <link
-        href="https://fonts.googleapis.com/css2?family=UoqMunThenKhung&family=WDXL+Lubrifont+SC&display=swap"
-        rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@100..700&family=UoqMunThenKhung&family=WDXL+Lubrifont+SC&display=swap"
+            rel="stylesheet"
         >
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         >
         <link rel="stylesheet" href="main.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.css"
+        >
+        <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js">
+        </script>
+        <script>hljs.highlightAll();</script>
+
     </head>
 
 <!-- *本文 -->
@@ -36,12 +45,13 @@
                 <p>
                     マインスイーパを制作する際に参考にしたサイト：<a href="https://zenn.dev/alkn203/books/phina-tutorial-minesweeper/viewer/phina-tutorial-minesweeper-01">phina.js ゲーム作成解説 マインスイーパー</a>
                 </p>
-                <p class="cyan-strong">
-                    ※サイト内のコードを参考にしていますが、多少の改変を行っている場合があります。
+                <p>
+                    <span class="underline-orange">※サイト内のコードを参考にしていますが、多少の改変を行っている場合があります。</span>
                 </p>
             </div>
 
-            <h2>事前に知っておきたいこと</h2>
+
+            <h2><i class="fa-solid fa-book"></i> 事前に知っておきたいこと <i class="fa-solid fa-book"></i></h2>
             <div class="p-block">
                 <p>
                     プログラミングを学習する際には、あらかじめ前提知識を身につけておくことが、コードの理解において重
@@ -49,6 +59,7 @@
                 </p>
                 <p>そのため、まずはJavaScriptとHTML/CSSについて事前に学習しておきましょう。</p>
             </div>
+
 
             <h3>JavaScriptとは?</h3>
             <div class="p-block">
@@ -77,6 +88,7 @@
                     また、比較的習得のしやすさに定評があるため、多くのプログラミング初学者が学習に励んでいます。
                 </p>
             </div>
+
 
             <h3>HTML/CSSとは?</h3>
             <div class="p-block">
@@ -120,6 +132,7 @@
                 </p>
             </div>
 
+
             <h3>JavaScriptでのゲーム開発で便利なライブラリ</h3>
             <div class="p-block">
                 <p>ライブラリとは、使用頻度の多いプログラムを機能ごとにまとめたファイルのことです。</p>
@@ -133,6 +146,7 @@
                     をインストールして使い方を勉強していきましょう。
                 </p>
             </div>
+
 
             <h4>phina.js</h4>
             <div class="p-block">
@@ -148,13 +162,16 @@
                     く、phina.jsについて書かれた日本語のサイトも豊富にあるため、初心者の方はまずはphina.jsから始めて
                     みましょう。
                 </p>
-                <p class="cyan-strong">今回は、このphina.jsを利用して開発していきます。</p>
+                <p>
+                    <span class="underline-orange">今回は、このphina.jsを利用して開発していきます。</span>
+                </p>
             </div>
             <div class="p-block">
                 <p>参考：<a href="https://phinajs.com/">phina.js</a></p>
             </div>
 
-            <img src="phina-js_img.png" alt="phina.jsのイメージ" width="90%" />
+            <img src="image\phina-js_img.png" alt="phina.jsのイメージ" width="90%" />
+
 
             <h4>Phaser.js</h4>
             <div class="p-block">
@@ -177,7 +194,8 @@
                 <p>参考：<a href="https://phaser.io/">Phaser.js</a></p>
             </div>
 
-            <img src="TemporaryIMG.jpg" alt="Phaser.jsのイメージ" width="90%" />
+            <img src="image\phaser-io_img.png" alt="Phaser.jsのイメージ" width="90%" />
+
 
             <h4>PixiJS</h4>
             <div class="p-block">
@@ -192,9 +210,10 @@
                 <p>参考：<a href="https://pixijs.com/">PixiJS</a></p>
             </div>
 
-            <img src="TemporaryIMG.jpg" alt="PixiJSのイメージ" width="90%" />
+            <img src="image\pixi-js_img.png" alt="PixiJSのイメージ" width="90%" />
 
-            <h2>ゲームの開発</h2>
+
+            <h2><i class="fa-solid fa-code"></i> ゲームの開発 <i class="fa-solid fa-code"></i></h2>
             <div class="p-block">
                 <p>
                     それでは、ここから実際に、phina.jsを利用してマインスイーパを開発していきましょう。
@@ -204,6 +223,7 @@
                 </p>
             </div>
 
+
             <h3>パネルの実装と配置</h3>
             <div class="p-block">
                 <p>
@@ -211,10 +231,737 @@
                 </p>
             </div>
 
-            <img src="TemporaryIMG.jpg" alt="タイルを並べたスクリーンショット" width="90%" />
+            <img src="image\Panel-placement.png" alt="タイルを並べたスクリーンショット" width="40%" />
+
+            <div class="p-block">
+                <p>
+                    初めに、ファイルをまとめるプロジェクトフォルダと、ウェブページの土台となるHTMLファイルを用意
+                    しましょう。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    まず、PCの好きな場所にフォルダを新規作成してください。フォルダ名は、ハイフン（-）やアンダーバー
+                    （_）以外の特殊記号や空白が含まれていなければ基本自由です。
+                </p>
+                <p>
+                    次に、作成したフォルダを右クリックし、メニューから <strong>Code で開く</strong>を選択すると、VSCodeが開かれ、制
+                    作したフォルダが表示されます。（※もし Code で開く が表示されない場合は、VSCodeを起動してから
+                    フォルダをウィンドウ内に直接ドラッグ＆ドロップしてください）
+                </p>
+                <p>
+                    そして、左上あたりにマウスを持っていくと表示される、<strong>新しいファイルの作成</strong>ボタン（<i class="fa-solid fa-file-circle-plus"></i> のようなボタ
+                    ン）をクリックし、 index.html という名前でHTMLファイルを新規作成しましょう。このファイル名は、
+                    他の名前でも問題はありませんが、GitHub Pages等でウェブサイトを公開する際は、この名前にしておく
+                    必要があります。
+                </p>
+                <p>
+                    その後、<a href="https://phinajs.com/">phina.jsの公式サイト</a>にある以下のコードをコピーし、先ほど作成した index.html ファイルに貼
+                    り付け（ペースト）してください。
+                </p>
+                <pre><code class="language-html">&lt;!doctype html&gt;
+
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset=&#039;utf-8&#039; /&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, user-scalable=no&quot; /&gt;
+    &lt;meta name=&quot;apple-mobile-web-app-capable&quot; content=&quot;yes&quot; /&gt;
+
+    &lt;title&gt;Getting started | phina.js&lt;/title&gt;
+    &lt;!-- phina.js を読み込む --&gt;
+    &lt;script src=&#039;http://cdn.rawgit.com/phi-jp/phina.js/v0.2.0/build/phina.js&#039;&gt;&lt;/script&gt;
+
+    &lt;!-- メイン処理 --&gt;
+    &lt;script src=&#039;main.js&#039;&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+
+            <div class="p-block">
+                <p>次は、実際にパネルを表示するための処理を、JavaScriptファイルに記述していきましょう。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    index.html を作成したときと同様に、今度は main.js という名前でJavaScriptファイルを新規作成しまし
+                    ょう。
+                </p>
+                <p>
+                    このファイル名は、 index.html 内で読み込むファイル名として指定されています。そのため、もしファイ
+                    ル名を変更したい場合は、 index.html の内容も同時に変更する必要があります。なので、今回は main.js 
+                    のまま進めることをおすすめします。
+                </p>
+                <p>
+                    ファイルの準備ができたら、次に示すコードをコピーし、作成したmain.jsに貼り付け（ペースト）してく
+                    ださい。
+                </p>
+                <pre><code class="language-js">// phina.js をグローバル領域に展開
+phina.globalize();
+
+// 定数
+var GRID_SIZE = 70; // グリッドのサイズ
+var SCREEN_SPACE = 10; // 画面左右の空白
+var PANEL_NUM_X = 9; // 横のパネル数
+var PANEL_NUM_Y = 10; // 縦のパネル数
+var SCREEN_WIDTH = GRID_SIZE * PANEL_NUM_X + SCREEN_SPACE // 画面横サイズ
+var SCREEN_HEIGHT = GRID_SIZE * (PANEL_NUM_Y + 2); // 画面縦サイズ
+var PANEL_SIZE = GRID_SIZE * 0.9; // パネルの大きさ
+var PANEL_OFFSET = (GRID_SIZE + SCREEN_SPACE) / 2; // オフセット値
+
+// メインシーン
+phina.define('MainScene', {
+  superClass: 'DisplayScene',
+  // コンストラクタ
+  init: function() {
+    // 親クラス初期化
+    this.superInit({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+    });
+    // 背景色
+    this.backgroundColor = '#808080'; // ≒'gray'
+    // グリッド
+    var grid = Grid(GRID_SIZE * PANEL_NUM_X, PANEL_NUM_X);
+    // グループ
+    var panelGroup = DisplayElement().addChildTo(this);
+    // ピース配置
+    PANEL_NUM_X.times(function(spanX) {
+      PANEL_NUM_Y.times(function(spanY) {
+        // パネル作成
+        var panel = Panel().addChildTo(panelGroup);
+        // Gridを利用して配置
+        panel.x = grid.span(spanX) + PANEL_OFFSET;
+        panel.y = grid.span(spanY) + PANEL_OFFSET;
+      });
+    });
+  },
+});
+
+// パネルクラス
+phina.define('Panel', {
+  // RectangleShapeを継承
+  superClass: 'RectangleShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        width: PANEL_SIZE,
+        height: PANEL_SIZE,
+        fill: '#c0c0c0', // 塗りつぶし色 ≒'silver'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+        cornerRadius: 2, // 角の丸み
+      });
+    },
+});
+
+// メイン
+phina.main(function() {
+  var app = GameApp({
+    startLabel: 'main', // メイン画面からスタート
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+  });
+  app.run();
+});</code></pre>
+            </div>
+            <div class="p-block">
+                <p>それでは、このコードを分解して、一つ一つどのような役割を持っているのか、見ていきましょう。</p>
+            </div>
+
+
+            <h4>phina.jsのセットアップ</h4>
+            <div class="p-block">
+                <pre><code class="language-js">// phina.js をグローバル領域に展開
+phina.globalize();</code></pre>
+                <p>これは、phina.jsを使いやすくするための<strong>おまじない</strong>です。</p>
+                <p>
+                    この一行を記述しておくことにより、 phina.define や DisplayScene といった phina.js の便利な機能
+                    を、 phina. を省略して記述することができます。
+                </p>
+            </div>
+
+
+            <h4>定数の定義</h4>
+            <div class="p-block">
+                <pre><code class="language-js">// 定数
+var GRID_SIZE = 70; // グリッドのサイズ
+var SCREEN_SPACE = 10; // 画面端の空白
+var PANEL_NUM_X = 9; // 横のパネル数
+var PANEL_NUM_Y = 10; // 縦のパネル数
+var SCREEN_WIDTH = GRID_SIZE * PANEL_NUM_X + SCREEN_SPACE // 画面横サイズ
+var SCREEN_HEIGHT = GRID_SIZE * (PANEL_NUM_Y + 2) + SCREEN_SPACE; // 画面縦サイズ
+var PANEL_SIZE = GRID_SIZE * 0.9; // パネルの大きさ
+var PANEL_OFFSET = (GRID_SIZE + SCREEN_SPACE) / 2; // オフセット値</code></pre>
+                <p>
+                    ここでは、プログラムの中で何度も使われる基本的な値を定義しています。このような、<strong>あとから変更しな
+                    い値</strong>を「定数」と呼びます。
+                </p>
+                <p>
+                    このような定数を使う理由は、例えば、後から横のパネルの数を9枚から5枚に変更したいと思ったとき、
+                    PANEL_NUM_X の値を9から5に変更するだけで、関連する画面サイズなども自動で計算し直されるた
+                    め、簡単にゲームに反映させることができるからです。
+                </p>
+            </div>
+            <div class="p-block>">
+                <p>
+                    それでは、この定義した定数を、一つずつ詳しく見ていきましょう
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">var GRID_SIZE = 70; // グリッドのサイズ</code></pre>
+                <p>
+                    グリッドの一辺の長さを70ピクセルに設定しています。
+                </p>
+                <p>
+                    この値は、画面全体のレイアウト設計の土台となる最も重要な定数であり、この値を変更することにより、ゲーム全体のスケール（縮尺）を変更することができます。
+                </p>
+                <p>
+                    ただし、ほかのほとんどの値がこのGRID_SIZEを基準にしているため、安易に変更すると意図しない表示崩れが起きる可能性があります。特別な理由がない限り、この値は変更せずに進めましょう。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">var SCREEN_SPACE = 10; // 画面端の空白</code></pre>
+                <p>
+                    画面端とパネル群との隙間を10ピクセルに設定しています。
+                </p>
+                <p>
+                    これは、画面を見やすくするために定義しています。この値が0だと、パネルが画面端に密着し、窮屈に見えてしまいます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">var PANEL_NUM_X = 9; // 横のパネル数
+var PANEL_NUM_Y = 10; // 縦のパネル数</code></pre>
+                <p>
+                    それぞれ、横と縦に何個パネルを並べるかを設定しています。
+                </p>
+                <p>
+                    この場合は、横に9個、縦に10個なので、9×10の盤面がつくられます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">var SCREEN_WIDTH = GRID_SIZE * PANEL_NUM_X + SCREEN_SPACE// 画面横サイズ</code></pre>
+                <p>
+                    ゲーム画面の横幅を計算しています。
+                </p>
+                <p>
+                    まず、 GRID_SIZE×PANEL_NUM_X でパネルを9枚並べられるだけの横幅を求めます。そこに左右の余白を確保するため、 SCREEN_SPACE を加算し、最終的な画面の横幅を決めています。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">var SCREEN_HEIGHT = GRID_SIZE * (PANEL_NUM_Y + 2) + SCREEN_SPACE; // 画面縦サイズ</code></pre>
+                <p>
+                    ゲーム画面の縦の高さを計算しています。
+                </p>
+                <p>
+                    PANEL_NUM_Y + 2 の部分で、画面の下に様々な情報などを表示するために、パネル2つ分のスペースを確保しています。また、 SCREEN_SPACEを加算し、上下の余白も確保しています。
+                </p>
+                <p>
+                    本セッションでは例として、パネル2枚（つまり固定値）分のスペースを確保する方式で進めます。
+                </p>
+                <p>
+                    この方式のほかに、パネル全体の高さに対する一定の比率分のスペースを確保する方式があります。その場合は、GRID_SIZE * PANEL_NUM_Y * 1.3 のように、特定の数値を掛けることにより実現できます。この方式の特徴は、パネルの縦の総数に応じて確保されるスペースの高さも変動する点です。
+                </p>
+                <p>
+                    なお、次のセッションからは、こちらの比率で指定する方式で進めていきます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    下の画像は、この方法で * 1.3（30%分）のスペースを確保した例です。
+                </p>
+                <div class="row-img">
+                <img src="image\panel_1-3.png" alt="縦10マスで1.3倍した時のスペース" height=600 />
+                <img src="image\panel_1-3plus.png" alt="縦20マスで1.3倍した時のスペース" height=600 />
+                </div>
+                <p>
+                    <span class="underline-orange">
+                        なお、比率で指定する場合、1未満の値を掛けるとパネル表示領域が削られてしまうので、必ず1以上の数値にするようにしてください。
+                    </span>
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">var PANEL_SIZE = GRID_SIZE * 0.9; // パネルの大きさ</code></pre>
+                <p>
+                    パネル自体の大きさを計算しています。
+                </p>
+                <p>
+                    パネルを配置する基準となるグリッドのサイズ（GRID_SIZE）に対して少し小さく（90%の大きさに）設定しています。こうすることで、パネル同士の間に適度な隙間が生まれ、一つ一つのパネルが区別しやすくなります。
+                </p>
+                <p>
+                    また、0.9 の値を小さくすることでパネルも小さくなり、相対的にパネル同士の隙間は広がります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">var PANEL_OFFSET = (GRID_SIZE + SCREEN_SPACE) / 2; // オフセット値</code></pre>
+                <p>
+                    パネルを配置する際の、<strong>基準点からのズレ</strong>を補正するための値を計算しています。
+                </p>
+                <p>
+                    phina.jsのグリッド機能は、各グリッドの左上を基準に座標を決めています。しかし、今回はパネルをグリッドの中心に配置したいため、そのズレを補正する必要があります。この PANEL_OFFSET は、そのための補正値です。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    具体的には、グリッド（GRID_SIZE）の半分の大きさだけ右下にずらすことで中心合わせができます。今回はさらに画面全体の余白（SCREEN_SPACE）も考慮し、その値を加算してから半分にし、最終的なオフセット値を算出しています。
+                </p>
+            </div>
+
+
+            <h4>メインシーン (MainScene)</h4>
+            <div class="p-block">
+                <pre><code class="language-js">// メインシーン
+phina.define('MainScene', {
+  superClass: 'DisplayScene',
+  // コンストラクタ
+  init: function() {
+    // 親クラス初期化
+    this.superInit({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+    });
+    // 背景色
+    this.backgroundColor = '#808080'; // ≒'gray'
+    // グリッド
+    var grid = Grid(GRID_SIZE * PANEL_NUM_X, PANEL_NUM_X);
+    // グループ
+    var panelGroup = DisplayElement().addChildTo(this);
+    // ピース配置
+    PANEL_NUM_X.times(function(spanX) {
+      PANEL_NUM_Y.times(function(spanY) {
+        // パネル作成
+        var panel = Panel().addChildTo(panelGroup);
+        // Gridを利用して配置
+        panel.x = grid.span(spanX) + PANEL_OFFSET;
+        panel.y = grid.span(spanY) + PANEL_OFFSET;
+      });
+    });
+  },
+});</code></pre>
+                <p>
+                    ここは、ゲームのメイン画面を定義している部分です。
+                </p>
+                <p>
+                    phina.jsでは、ゲームの各場面をシーン (Scene) という単位で管理します。今回定義している MainScene もその一つです。
+            </p>
+            </div>
+                <div class="p-code">
+                <p>
+                    参考までに、デフォルトで用意されているシーンを以下に示します。
+                </p>
+                <ul>
+                    <li>SplashScene（スプラッシュシーンと呼ばれている、ゲーム起動時に表示されるシーン）</li>
+                    <li>TitleScene（タイトル画面。デフォルトだとこの画面が表示される）</li>
+                    <li>MainScene（ゲームのメインシーン。今回定義しているもの）</li>
+                    <li>ResultScene</li>
+                </ul>
+                <p>
+                    今回はこの MainScene の中で、画面の大きさや背景色、そしてパネルの配置といった、ゲーム画面の初期設定を行っています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    それでは、今度はこの MainScene の設計図を、一行ずつ詳しく見ていきましょう
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">phina.define('MainScene', {</code></pre>
+                <p>
+                    これからMainSceneという名前の新しい「クラス（設計図）」を定義します、という宣言です。
+                </p>
+                <p>
+                    phina.define が、phina.jsでクラスを定義するための命令になります。第1引数の 'MainScene' で記述するクラス名を表し、第2引数の { ... } の中に、そのクラスの具体的な中身（プロパティやメソッド）を記述していきます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">  superClass: 'DisplayScene',</code></pre>
+                <p>
+                    MainSceneは、phina.jsがもともと持っているDisplayScene（画面表示の基本機能を持つクラス）を元にして作る、という指定です。
+                </p>
+                <p>
+                    DisplaySceneには、画面に何かを表示するための基本的な機能（例えば、背景色を変えるなど）がすべて詰まっています。このように、既存のクラスの機能を引き継いで新しいクラスを作ることを「継承（けいしょう）」と呼びます。
+                </p>
+                <p>
+                    継承のおかげで、私たちは画面表示の基本機能をゼロから作る必要がなく、ゲーム開発の面白い部分に集中できるのです。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">// コンストラクタ
+  init: function() {</code></pre>
+                <p>
+                    このinitは、MainSceneクラスの**コンストラクタ（初期化処理）**です。
+                </p>
+                <p>
+                    MainSceneのインスタンス（実体）が生成される際に、一番最初に一度だけ実行される特別な関数で、この中に画面の準備など、初期設定に関するコードを記述します。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">    // 親クラス初期化
+    this.superInit({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+    });</code></pre>
+                <p>
+                    元にした親クラス（DisplayScene）の初期化処理を呼び出しています。
+                </p>
+                <p>
+                    これをする理由は、親クラスの機能を引き継いだ場合、まずthis.superInit()を呼び出して親クラス自身に準備をさせないと、継承した機能がうまく動作しないことがあるからです。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    また、このsuperInitを呼び出す際に、引数として { ... } を渡すことで、親クラスに様々な設定を伝えることができます。
+                </p>
+                <p>
+                    ここでは、先ほど定義した定数 SCREEN_WIDTH と SCREEN_HEIGHT を渡し、このシーンの画面サイズを設定しています。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">    // 背景色
+    this.backgroundColor = '#808080'; // ≒'gray'</code></pre>
+                <p>
+                    this.backgroundColorプロパティに値を設定することで、このシーンの背景色を灰色(#808080 ≒ gray)に設定しています。
+                </p>
+                <p>
+                    この値をカラーコードと言い、カラーコードを書き換えることにより、背景色を自由に変更することができます。
+                </p>
+                <p>
+                    例えば、'#000000'とすれば黒色になります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">    // グリッド
+    var grid = Grid(GRID_SIZE * PANEL_NUM_X, PANEL_NUM_X);</code></pre>
+                <p>
+                    パネルを等間隔に配置するための便利な道具（Gridオブジェクト）を作成しています。この grid は、X座標とY座標の両方の計算に使える、非常に強力なツールです。
+                </p>
+                <p>
+                    また、この grid という変数を使えば、後ほど説明するように grid.span(i) と書くだけでi番目のマス目の座標を簡単に取得できます。
+                </p>
+                <p>
+                    GRID_SIZE * PANEL_NUM_X でグリッド全体の幅を指定し、 PANEL_NUM_X でグリッドを何分割するかを指定しています。（今回の場合は、横方向に9分割）
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">    // グループ
+    var panelGroup = DisplayElement().addChildTo(this);</code></pre>
+                <p>
+                    これからたくさん作るパネルをまとめて管理するための、「グループ」を作成しています。パソコンで言うところの<strong>フォルダ</strong>のようなものだと考えるとわかりやすいでしょう。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    この一行は、実は2つの処理を.で連結して実行しています。
+                </p>
+                <p>
+                    まず、DisplayElement()で空のグループ（表示要素）を作成しています。その次に、.addChildTo(this)で、作成したグループをこのシーン（this）に追加しています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    このようにシーンにグループを追加することで、グループ内のパネルが画面に表示されるようになります。
+                </p>
+                <p>
+                    今後、このpanelGroupに各パネルを追加していくことになります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">    // ピース配置
+    PANEL_NUM_X.times(function(spanX) {
+      PANEL_NUM_Y.times(function(spanY) {</code></pre>
+                <p>
+                    n.times( ... )は、中の処理をn回繰り返す処理です。
+                </p>
+                <p>
+                    n.times(function(i) { ... }) と書くと、{ ... } の中の処理をn回繰り返します。またその際、変数 i には0からn-1までの数値が順番に入ります。
+                </p>
+                <p>
+                    ここでは、この処理を利用し、盤面のマス目一つ一つにパネルを配置していきます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    今回の場合は、 PANEL_NUM_X は 9 、 PANEL_NUM_Y は 10 となり、またそれが重なっている（二重ループ）ので、「10回繰り返す処理」を「9回繰り返す」ことになり、合計 9 x 10 = 90回処理が実行されます。
+                </p>
+                <p>
+                    また、spanXには0から8までの数字が、spanYには0から9までの数字が順番に入ります。これにより、盤面のすべてのマス目（今回の場合は、(0,0), (0,1), ..., (8,9)）に対して処理を行うことができます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">        // パネル作成
+        var panel = Panel().addChildTo(panelGroup);</code></pre>
+                <p>
+                    panel()で、後ほど定義するパネルの設計図から、実際のパネルを1つずつ作成しています。
+                </p>
+                <p>
+                    また、作成したパネルを.addChildTo(this)でシーンに直接追加するのではなく、.addChildTo(panelGroup)でグループに追加しています。
+                </p>
+                <p>
+                    こうすることにより、90個のパネルがpanelGroupという一つの<strong>フォルダ</strong>にまとめられ、後で一括管理できるようになるのです。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">        // Gridを利用して配置
+        panel.x = grid.span(spanX) + PANEL_OFFSET;
+        panel.y = grid.span(spanY) + PANEL_OFFSET;</code></pre>
+                <p>
+                    作成したパネルのX座標（横の位置）とY座標（縦の位置）を設定し、正しく配置しています。
+                </p>
+                <p>
+                    grid.span(spanX)では、先ほど作成したgridオブジェクトを使い、spanX番目（0〜8番目）のグリッドのX座標を取得します。
+                </p>
+                <p>
+                    また、計算された座標にオフセット値を足すことで、パネルがグリッドの中央に来るように微調整しています。
+                </p>
+                <p>
+                    panel.yも同様に、縦の位置を設定しています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    ここで、Y座標の計算にも、X軸用に作ったgridを使い回して大丈夫なのか疑問に思うかもしれません。
+                </p>
+                <p>
+                    しかし、.phina.jsの Grid は賢く、grid.span(i) という命令は、単純に「i番目のマス目の位置」を計算して返すだけです。その「1マスあたりのサイズ」は、X方向もY方向も同じ GRID_SIZE なので、X軸用に作ったグリッドを、そのままY座標の計算に使っても全く問題ないのです。
+                </p>
+            </div>
+
+
+            <h4>パネルクラス (Panel)</h4>
+            <div class="p-block">
+                <pre><code class="language-js">// パネルクラス
+phina.define('Panel', {
+  // RectangleShapeを継承
+  superClass: 'RectangleShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        width: PANEL_SIZE,
+        height: PANEL_SIZE,
+        fill: '#c0c0c0', // 塗りつぶし色 ≒'silver'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+        cornerRadius: 2, // 角の丸み
+      });
+    },
+});</code></pre>
+                <p>
+                    ここは、パネル1つ1つの見た目や動きを定義する、Panelクラス（設計図）を作成する部分です。
+                </p>
+                <p>
+                    MainSceneの時と同様に、phina.defineでクラスを定義し、superClassで親クラスを指定、initで初期化処理を記述する、という構成になっています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    このクラスで、パネルの色や形、大きさといった、基本的なスタイルを設定していきます。
+                </p>
+                <p>
+                    それでは、つぎにこの panel の設計図を、一行ずつ詳しく見ていきましょう
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">// パネルクラス
+phina.define('Panel', {</code></pre>
+                <p>
+                    先ほど MainScene の中で、 var panel = Panel() というコードを書きましたが、そのPanel()とは何かを、ここで定義しています。
+                </p>
+                <p>
+                    MainScene の時と同様に、 phina.define を利用し、 Panel という名前の新しいクラス（設計図）を定義しています。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">  // RectangleShapeを継承
+  superClass: 'RectangleShape',</code></pre>
+                <p>
+                    MainScene が DisplayScene を継承したのと同様に、 Panel クラスは RectangleShape というクラスを継承しています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    RectangleShapeは、その名の通り、四角形を描画するための基本的な機能（例えば、大きさや色、枠線などを設定する機能）をすべて持っています。
+                </p>
+                <p>
+                    このクラスを継承することで、私たちは面倒な描画処理を自分で書く必要がなく、簡単に四角形（パネル）を表示できるのです。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">    // コンストラクタ
+    init: function() {</code></pre>
+                <p>
+                    MainSceneの時と同様に、一番最初に一度だけ、init関数でPanelクラスのコンストラクタ（初期化処理）を行っています。
+                </p>
+                <p>
+                    この中に、パネルの大きさや色といった、基本的な見た目に関する初期設定を記述していきます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">      // 親クラス初期化
+      this.superInit({
+        width: PANEL_SIZE,
+        height: PANEL_SIZE,
+        fill: '#c0c0c0', // 塗りつぶし色 ≒'silver'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+        cornerRadius: 2, // 角の丸み</code></pre>
+                <p>
+                    MainSceneの時と同様に、親クラス（RectangleShape）の初期化処理（superInit）を呼び出しています。
+                </p>
+                <p>
+                    この際に、引数として { ... } の中に設定情報を渡すことで、描画される四角形の見た目を細かく指定することができます。今回は、以下のように設定しています。
+                </p>
+                <ul>
+                    <li>width, height：パネルの大きさを、先ほど定義したPANEL_SIZEに設定。</li>
+                    <li>fill：塗りつぶしの色を銀色（#c0c0c0 ≒ silver）に設定。</li>
+                    <li>stroke：枠線の色を白（#ffffff ≒ white）に設定。</li>
+                    <li>cornerRadius：角を2ピクセル分丸く設定。</li>
+                </ul>
+                <p>
+                    これらの値を変更することにより、パネルの見た目を自由にカスタマイズすることができます。
+                </p>
+            </div>
+
+
+            <h4>メイン処理 (ゲームの起動)</h4>
+            <div class="p-block">
+                <pre><code class="language-js">// メイン
+phina.main(function() {
+  var app = GameApp({
+    startLabel: 'main', // メイン画面からスタート
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+  });
+  app.run();
+});</code></pre>
+                <p>
+                    ここは、最後にこれまで定義してきた定数やクラス（MainScene, Panel）を組み合わせて、一つのゲームアプリケーションとして起動するための部分です。
+                </p>
+                <p>
+                    このコードがあって初めて、私たちが作ったマインスイーパが実際に画面に表示され、動作するようになります。
+                </p>
+                <p>
+                    それでは、このメイン処理の中身を、一行ずつ詳しく見ていきましょう
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">phina.main(function() {</code></pre>
+                <p>
+                    HTMLページの読み込みがすべて完了したら、{ ... } の中の処理を実行するという、phina.jsの基本的なおまじないです。
+                </p>
+                <p>
+                    この一行を記述しておかないと、HTML側の準備が整う前にJavaScriptがゲームの描画を始めてしまい、「描画する場所（キャンバス）がありません」といったようなエラーが起こる可能性があります。
+                </p>
+                <p>
+                    なので、確実に準備が整ってからゲームを開始するために、すべての起動処理をこのphina.mainの中に記述します。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">  var app = GameApp({
+    startLabel: 'main', // メイン画面からスタート
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+  });</code></pre>
+                <p>
+                    GameAppでゲームアプリケーション本体を作成し、appという変数に格納しています。
+                </p>
+                <p>
+                    その際、引数として { ... } の中に、アプリケーションの基本的な設定情報を渡しています。今回は、以下のように設定しています。
+                </p>
+                <ul>
+                    <li>startLabel: 'main'：ゲーム開始時、最初にMainSceneを表示する。</li>
+                    <li>width, height: ゲーム全体の画面サイズを先ほど求めた定数に。</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-js">  app.run();</code></pre>
+                <p>
+                    最後に、先ほど作成したゲームアプリケーションを起動（スタート）しています。
+                </p>
+                <p>
+                    この一行が実行された瞬間に、私たちの作ったマインスイーパが画面に表示され、ゲームがスタートします。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    これで、パネルを画面に配置することができました。
+                </p>
+                <p>
+                    次のステップとして、この盤面にランダムに爆弾を配置する処理を追加していきます。
+                </p>
+            </div>
+
+            <h3>爆弾の配置</h3>
+            <div class="p-block">
+                <p>
+                    ここでは、下のスクリーンショットのように並べたパネルに爆弾を配置していきます。
+                </p>
+            </div>
+
+            <img src="image\Panel-placement.png" alt="タイルを並べたスクリーンショット" width="40%" />
+
             <!-- ここまでで本文終了 -->
 
         </div>
+
+
+        <!--* コピーボタン作成用コードのため、操作不要 -->
+        <script>
+        // コピーボタン作成用コード
+        (function(d){
+            const pre = d.querySelectorAll('pre');
+            if(pre.length == 0){
+                return
+            }
+            for(let i = 0; i < pre.length; i++){
+                const btn = d.createElement('button');
+                btn.className = 'copy-button';
+                btn.textContent = 'Copy Code';
+                pre[i].insertBefore(btn, pre[i].firstElementChild);
+                btn.addEventListener('click', copy_code, false)
+            }
+        })(document);
+
+        // コピー機能用コード
+        function copy_code(){
+            const code = this.nextElementSibling.innerText;
+            if(navigator.clipboard){
+                navigator.clipboard.writeText(code).then(() => {
+                    this.textContent = 'Copied';
+                    setTimeout(() => {
+                        this.textContent = 'Copy Code Again'
+                    }, 500)
+                }).catch(e => {
+                    alert('コピーできませんでした\nお手数ですが手動でコピーしてください\n\n' + e.message)
+                })
+            } else{
+                alert('このブラウザは Clipboard API 非対応です\nお手数ですが手動でコピーしてください')
+            }
+        }
+        </script>
     </body>
 </html>
 
