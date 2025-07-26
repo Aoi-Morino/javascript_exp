@@ -1061,61 +1061,60 @@ var SCREEN_WIDTH = GRID_SIZE * PANEL_NUM_X + SCREEN_SPACE// 画面横サイズ
 + var SCREEN_HEIGHT = GRID_SIZE * PANEL_NUM_Y * PANEL_MARGIN_RATIO + SCREEN_SPACE; //* 変更後：画面縦サイズ
 + var PANEL_SIZE = GRID_SIZE * PANEL_SIZE_RATIO; //* 変更後：パネルの大きさ
 var PANEL_OFFSET = (GRID_SIZE + SCREEN_SPACE) / 2; // オフセット値</code></pre>
+                <p>この部分では、いくつかの追加要素と、変更を行っています。</p>
+                <p>まず、爆弾の数を管理する定数を追加しています。</p>
                 <p>
-                    この部分では、いくつかの追加要素と、変更を行っています。
-                </p>
-                <p>
-                    まず、爆弾の数を管理する定数を追加しています。
-                </p>
-                <p>
-                    次に、前回のセッションで「次回から使う」と予告した、比率でレイアウトを計算する方法にコードを修正しています。
+                    次に、前回のセッションで「次回から使う」と予告した、比率でレイアウトを計算する方法にコードを修正
+                    しています。
                 </p>
             </div>
             <div class="p-block">
-                <p>
-                    それでは、それぞれ抜粋し、詳しく見ていきましょう。
-                </p>
+                <p>それでは、それぞれ抜粋し、詳しく見ていきましょう。</p>
             </div>
 
             <div class="code-block">
                 <pre><code class="language-Diff">+ var PANEL_MARGIN_RATIO = 1.3; //* 追加：画面縦の空白の割合</code></pre>
                 <p>
-                    これは、前回のセッションで学んだ「比率でスペースを確保する方法」で使う、比率の値を定数として定義したものです。
+                    これは、前回のセッションで学んだ「比率でスペースを確保する方法」で使う、比率の値を定数として定義
+                    したものです。
                 </p>
                 <p>
-                    このように定数にしておくことにより、画面下部の余白の割合を変更する際、この一行の数値を変更するだけで済むようになります。
+                    このように定数にしておくことにより、画面下部の余白の割合を変更する際、この一行の数値を変更するだ
+                    けで済むようになります。
                 </p>
             </div>
 
             <div class="code-block">
                 <pre><code class="language-Diff">+ var PANEL_SIZE_RATIO = 0.9; //* 追加：パネル大きさの割合</code></pre>
                 <p>
-                    パネルの大きさを計算する際に使う縮小率（0.9）を、PANEL_SIZE_RATIOという名前の定数にしたものです。
+                    パネルの大きさを計算する際に使う縮小率（0.9）を、PANEL_SIZE_RATIOという名前の定数にしたもの
+                    です。
                 </p>
                 <p>
-                    PANEL_MARGIN_RATIO の時と同様、定数にしておくことにより、縮小率を変更する際、この一行の数値を変更するだけで済むようになります。
+                    PANEL_MARGIN_RATIO の時と同様、定数にしておくことにより、縮小率を変更する際、この一行の数
+                    値を変更するだけで済むようになります。
                 </p>
             </div>
             <div class="p-block">
+                <p>またそれだけでなく、コードの可読性（分かりやすさ）が向上するというメリットがあります。</p>
                 <p>
-                    またそれだけでなく、コードの可読性（分かりやすさ）が向上するというメリットがあります。
+                    実際、PANEL_SIZE = GRID_SIZE * 0.9 と書くよりも、 PANEL_SIZE = GRID_SIZE *
+                    PANEL_SIZE_RATIO と書く方が、「グリッドサイズにパネルサイズの比率を掛けているんだな」と、コ
+                    ードがその意味を語ってくれるようになります。
                 </p>
                 <p>
-                    実際、PANEL_SIZE = GRID_SIZE * 0.9 と書くよりも、 PANEL_SIZE = GRID_SIZE * PANEL_SIZE_RATIO と書く方が、「グリッドサイズにパネルサイズの比率を掛けているんだな」と、コードがその意味を語ってくれるようになります。
-                </p>
-                <p>
-                    このように、コード中に直接書かれた意味の読み取れない数値（マジックナンバー）を、意味のある名前の定数に置き換えるのは、読みやすく、メンテナンスしやすいコードを書くための基本です。
+                    このように、コード中に直接書かれた意味の読み取れない数値（マジックナンバー）を、意味のある名前の
+                    定数に置き換えるのは、読みやすく、メンテナンスしやすいコードを書くための基本です。
                 </p>
             </div>
 
             <div class="code-block">
                 <pre><code class="language-Diff">+ var BOMB_NUM = 10; //* 追加：爆弾数</code></pre>
                 <p>
-                    パネルに仕込む爆弾の数を設定しています。この値を変更するだけで、ゲームの難易度を簡単に調整できます。
+                    パネルに仕込む爆弾の数を設定しています。この値を変更するだけで、ゲームの難易度を簡単に調整できま
+                    す。
                 </p>
-                <p>
-                    この場合は、90個のパネルのうち、ランダムな10個のパネルに爆弾が仕込まれます。
-                </p>
+                <p>この場合は、90個のパネルのうち、ランダムな10個のパネルに爆弾が仕込まれます。</p>
             </div>
 
             <div class="code-block">
@@ -1124,10 +1123,13 @@ var PANEL_OFFSET = (GRID_SIZE + SCREEN_SPACE) / 2; // オフセット値</code><
 + var SCREEN_HEIGHT = GRID_SIZE * PANEL_NUM_Y * PANEL_MARGIN_RATIO + SCREEN_SPACE; //* 変更：画面縦サイズ
 + var PANEL_SIZE = GRID_SIZE * PANEL_SIZE_RATIO; //* 変更：パネルの大きさ</code></pre>
                 <p>
-                    先ほど追加した PANEL_MARGIN_RATIO と PANEL_SIZE_RATIO を使い、SCREEN_HEIGHTとPANEL_SIZEの計算式をそれぞれ変更しています。
+                    先ほど追加した PANEL_MARGIN_RATIO と PANEL_SIZE_RATIO を使い、 SCREEN_HEIGHT と
+                    PANEL_SIZE の計算式をそれぞれ変更しています。
                 </p>
                 <p>
-                    これにより、* 1.3や* 0.9といったマジックナンバーがコードから排除され、PANEL_MARGIN_RATIO（マージンの比率）やPANEL_SIZE_RATIO（サイズの比率）といった、意味の分かる名前で計算式を記述できるようになりました。
+                    これにより、* 1.3や* 0.9といったマジックナンバーがコードから排除され、PANEL_MARGIN_RATIO
+                    （マージンの比率）やPANEL_SIZE_RATIO（サイズの比率）といった、意味の分かる名前で計算式を記
+                    述できるようになりました。
                 </p>
             </div>
 
@@ -1174,20 +1176,12 @@ phina.define('MainScene', {
     });
   },
 });</code></pre>
-                <p>
-                    この部分では、いくつかの追加を行っています。
-                </p>
-                <p>
-                    まず、爆弾の位置を管理する配列を追加し、実際に爆弾の位置を決定しています。
-                </p>
-                <p>
-                    次に、その情報に基づき、パネルが爆弾かどうかを判定し、パネルに爆弾の情報を紐づけています。
-                </p>
+                <p>この部分では、いくつかの追加を行っています。</p>
+                <p>まず、爆弾の位置を管理する配列を追加し、実際に爆弾の位置を決定しています。</p>
+                <p>次に、その情報に基づき、パネルが爆弾かどうかを判定し、パネルに爆弾の情報を紐づけています。</p>
             </div>
             <div class="p-block">
-                <p>
-                    それでは、それぞれ抜粋し、詳しく見ていきましょう。
-                </p>
+                <p>それでは、それぞれ抜粋し、詳しく見ていきましょう。</p>
             </div>
 
             <div class="code-block">
@@ -1196,78 +1190,79 @@ phina.define('MainScene', {
 +     (PANEL_NUM_X * PANEL_NUM_Y).times(function() {
 +       bombs.push(false);
 +     });</code></pre>
+                <p>どのパネルが爆弾になるかという情報を管理するための配列（bombs）を準備しています。</p>
+                <p>具体的には、まずvar bombs = []; で空っぽの配列（情報を入れる箱）を用意しています。</p>
                 <p>
-                    どのパネルが爆弾になるかという情報を管理するための配列（bombs）を準備しています。
-                </p>
-                <p>
-                    具体的には、まずvar bombs = []; で空っぽの配列（情報を入れる箱）を用意しています。
-                </p>
-                <p>
-                    次に、timesメソッドを使って、その配列の中にパネルの総数（90個）分のfalse（否定を意味します。今回の場合は、爆弾ではないという意味になります。）を詰め込んでいきます。
+                    次に、timesメソッドを使って、その配列の中にパネルの総数（90個）分のfalse（否定を意味します。今
+                    回の場合は、爆弾ではないという意味になります。）を詰め込んでいきます。
                 </p>
             </div>
             <div class="p-block">
-                <p>
-                    これで、「まだ一つも爆弾が置かれていない、まっさらな状態」の盤面データが完成しました。
-                </p>
+                <p>これで、「まだ一つも爆弾が置かれていない、まっさらな状態」の盤面データが完成しました。</p>
             </div>
 
             <div class="code-block">
                 <pre><code class="language-Diff">+     bombs.fill(true, 0, BOMB_NUM).shuffle();</code></pre>
+                <p>先ほど準備した配列の一部をtrue（爆弾である）に書き換えています。</p>
                 <p>
-                    先ほど準備した配列の一部をtrue（爆弾である）に書き換えています。
+                    具体的に言うと、まず bombs.fill(true, 0, BOMB_NUM) で、配列の先頭から BOMB_NUM個（10個）だ
+                    けをtrue（肯定を意味します。今回の場合は、爆弾であるという意味になります。）で上書きしています。
                 </p>
-                <p>
-                    具体的に言うと、まず bombs.fill(true, 0, BOMB_NUM) で、配列の先頭から BOMB_NUM個（10個）だけをtrue（肯定を意味します。今回の場合は、爆弾であるという意味になります。）で上書きしています。
-                </p>
-                <p>
-                    次に、.shuffle()で配列の中身をシャッフルし、10個の爆弾をランダムな位置に散らばらせます。
-                </p>
+                <p>次に、.shuffle()で配列の中身をシャッフルし、10個の爆弾をランダムな位置に散らばらせます。</p>
             </div>
             <div class="p-block">
-                <p>
-                    これで、10個の爆弾がランダムな位置に配置された盤面データが完成しました。
-                </p>
+                <p>これで、10個の爆弾がランダムな位置に配置された盤面データが完成しました。</p>
             </div>
 
             <div class="code-block">
                 <pre><code class="language-Diff">+         //* 追加：パネルに爆弾情報を紐づける
 +         panel.isBomb = bombs[spanX * PANEL_NUM_Y + spanY];</code></pre>
                 <p>
-                    90個のパネルを一つずつ作成するループの中で、そのパネルが爆弾かどうかを判定し、情報を紐付けています。
+                    90個のパネルを一つずつ作成するループの中で、そのパネルが爆弾かどうかを判定し、情報を紐付けてい
+                    ます。
                 </p>
                 <p>
-                    具体的には、各パネルに isBomb という「爆弾フラグ」を持たせ、bombs配列から対応する情報（trueかfalse）をセットしています。
+                    具体的には、各パネルに isBomb という「爆弾フラグ」を持たせ、bombs配列から対応する情報（trueか
+                    false）をセットしています。
                 </p>
                 <p>
-                    しかし、bombs配列は1次元の長い配列であるのに対し、パネルの位置はspanXとspanYという2次元の座標で管理されています。そこで、spanX * PANEL_NUM_Y + spanY という計算を行うことで、2次元の座標を1次元配列のインデックス（何番目か）に変換しています。
+                    しかし、bombs配列は1次元の長い配列であるのに対し、パネルの位置はspanXとspanYという2次元の座
+                    標で管理されています。そこで、spanX * PANEL_NUM_Y + spanY という計算を行うことで、2次元の座
+                    標を1次元配列のインデックス（何番目か）に変換しています。
                 </p>
             </div>
             <div class="p-block">
                 <p>
-                    それでは、この式の意味について、PANEL_NUM_Yが10で(spanX, spanY)が(2, 5)のマスの時を例として考えていきましょう。
+                    それでは、この式の意味について、PANEL_NUM_Yが10で(spanX, spanY)が(2, 5)のマスの時を例として
+                    考えていきましょう。
                 </p>
                 <p>
-                    まず、 spanX * PANEL_NUM_Y で、X座標が2の列の直前までに、マスが全部で何個あるか（X=0の列の10個 + X=1の列の10個）を計算しています。
+                    まず、 spanX * PANEL_NUM_Y で、X座標が2の列の直前までに、マスが全部で何個あるか（X=0の列の
+                    10個 + X=1の列の10個）を計算しています。
                 </p>
                 <p>
-                    次に、Y座標である5を足すことで、bombs配列の25番目（0から数えるので26番目の要素）のtrue/falseを取り出すことができるのです。
+                    次に、Y座標である5を足すことで、bombs配列の25番目（0から数えるので26番目の要素）のtrue/false
+                    を取り出すことができるのです。
                 </p>
             </div>
 
             <div class="code-block">
                 <pre><code class="language-Diff">+         if (panel.isBomb) Bomb().addChildTo(panel);</code></pre>
                 <p>
-                    先ほどパネルに紐づけた情報から、もしパネルが爆弾だった場合に、目印となる爆弾の画像を表示しています。
+                    先ほどパネルに紐づけた情報から、もしパネルが爆弾だった場合に、目印となる爆弾の画像を表示していま
+                    す。
                 </p>
                 <p>
-                    まず if (panel.isBomb) でそのパネルが爆弾である（つまりisBombがtrueである）かを判定しています。これを<strong>if文</strong>と呼び、if文の条件式にtrueという値が入ると、それに続く処理が実行されます。
+                    まず if (panel.isBomb) でそのパネルが爆弾である（つまりisBombがtrueである）かを判定しています。
+                    これを<strong>if文</strong>と呼び、if文の条件式にtrueという値が入ると、それに続く処理が実行されます。
                 </p>
                 <p>
-                    もし isBomb が true なら次に、後ほど定義するBombクラスから爆弾の見た目を持つオブジェクトを生成し、addChildTo(panel)でそのパネルの子要素として表示しています。
+                    もし isBomb が true なら次に、後ほど定義するBombクラスから爆弾の見た目を持つオブジェクトを生成
+                    し、addChildTo(panel)でそのパネルの子要素として表示しています。
                 </p>
                 <p>
-                    このように、あるオブジェクトを別のオブジェクトの子要素にすることで、親子で一緒に移動したり、親が消えれば子も一緒に消えたり、といった便利な親子関係を作ることができます。
+                    このように、あるオブジェクトを別のオブジェクトの子要素にすることで、親子で一緒に移動したり、親が
+                    消えれば子も一緒に消えたり、といった便利な親子関係を作ることができます。
                 </p>
             </div>
 
@@ -1304,19 +1299,20 @@ phina.define('Bomb', {
 });
 //* ここまで</code></pre>
                 <p>
-                    ここは、爆弾の見た目や動きを定義する、新たなクラスであるbombクラス（設計図）を作成する部分です。
+                    ここは、爆弾の見た目や動きを定義する、新たなクラスであるbombクラス（設計図）を作成する部分で
+                    す。
                 </p>
                 <p>
-                    これまでのクラスと同様に、phina.defineでクラスを定義し、superClassで親クラスを指定、initで初期化 処理を記述する、という構成になっています。
+                    これまでのクラスと同様に、phina.defineでクラスを定義し、superClassで親クラスを指定、initで初期
+                    化処理を記述する、という構成になっています。
                 </p>
                 <p>
-                    Bombクラスの大きな特徴は、initメソッドの中でRectangleShape（四角形）やCircleShape（円）といった複数の図形パーツを生成し、それらを組み合わせて一つの爆弾オブジェクトを作り上げている点です。
+                    Bombクラスの大きな特徴は、initメソッドの中でRectangleShape（四角形）やCircleShape（円）とい
+                    った複数の図形パーツを生成し、それらを組み合わせて一つの爆弾オブジェクトを作り上げている点です。
                 </p>
             </div>
             <div class="p-block">
-                <p>
-                    それでは、この bomb の設計図を、一行ずつ詳しく見ていきましょう。
-                </p>
+                <p>それでは、この bomb の設計図を、一行ずつ詳しく見ていきましょう。</p>
             </div>
 
             <div class="code-block">
@@ -1332,35 +1328,29 @@ phina.define('Bomb', {
         height: GRID_SIZE,
         backgroundColor: 'transparent',
       });</code></pre>
+                <p>ここまでは、これまでのクラスとよく似た構成となっています。</p>
+            </div>
+            <div class="p-block">
+                <p>まずphina.define を利用し、 Bomb という名前の新しいクラス（設計図）を定義しています。</p>
+            </div>
+            <div class="p-block">
+                <p>次に、親クラスとして Shape というクラスを継承しています。</p>
                 <p>
-                    ここまでは、これまでのクラスとよく似た構成となっています。
+                    Shapeクラスは、それ自体は透明なグループのようなものです。この透明な土台の上に、RectangleShape
+                    （導線）やCircleShape（本体）といった複数の図形パーツを配置していくことで、複雑な形のオブジェク
+                    トを一つにまとめることができます。
                 </p>
             </div>
             <div class="p-block">
+                <p>そして、init関数で、Bombクラスのコンストラクタ（初期化処理） を行っています。</p>
                 <p>
-                    まずphina.define を利用し、 Bomb という名前の新しいクラス（設計図）を定義しています。
+                    その中で、idthとheightでこのBombオブジェクト全体の占有サイズをGRID_SIZEに設定し、また
+                    backgroundColorを'transparent'（透明）にしています。これは、後から追加する導線や本体の図形だけ
+                    を表示させるための設定です。
                 </p>
             </div>
             <div class="p-block">
-                <p>
-                    次に、親クラスとして Shape というクラスを継承しています。
-                </p>
-                <p>
-                    Shapeクラスは、それ自体は透明なグループのようなものです。この透明な土台の上に、RectangleShape（導線）やCircleShape（本体）といった複数の図形パーツを配置していくことで、複雑な形のオブジェクトを一つにまとめることができます。
-                </p>
-            </div>
-            <div class="p-block">
-                <p>
-                    そして、init関数で、Bombクラスのコンストラクタ（初期化処理） を行っています。
-                </p>
-                <p>
-                    その中で、idthとheightでこのBombオブジェクト全体の占有サイズをGRID_SIZEに設定し、またbackgroundColorを'transparent'（透明）にしています。これは、後から追加する導線や本体の図形だけを表示させるための設定です。
-                </p>
-            </div>
-            <div class="p-block">
-                <p>
-                    ここから、これまでのクラスとは少し違う構成になっていきます。
-                </p>
+                <p>ここから、これまでのクラスとは少し違う構成になっていきます。</p>
             </div>
 
             <div class="code-block">
@@ -1371,14 +1361,14 @@ phina.define('Bomb', {
         fill: "#000088", // 塗りつぶし色 ≒'navy'
         stroke: '#ffffff', // 枠の色 ≒'white'
         y: -20,}).addChildTo(this);</code></pre>
+                <p>ここでは、爆弾の「導線」にあたる、小さな四角形のパーツを作成しています。</p>
                 <p>
-                    ここでは、爆弾の「導線」にあたる、小さな四角形のパーツを作成しています。
+                    RectangleShapeは、new phina.display.RectangleShape({ ... }) の省略形であり、phina.jsで手軽に四
+                    角形の図形オブジェクトを生成するための便利な記法です。
                 </p>
                 <p>
-                    RectangleShapeは、new phina.display.RectangleShape({ ... }) の省略形であり、phina.jsで手軽に四角形の図形オブジェクトを生成するための便利な記法です。
-                </p>
-                <p>
-                    その際に、引数として{ ... } の中に設定情報を渡すことで、描画される四角形の見た目を細かく指定することができます。今回は、以下のように設定しています。
+                    その際に、引数として{ ... } の中に設定情報を渡すことで、描画される四角形の見た目を細かく指定するこ
+                    とができます。今回は、以下のように設定しています。
                 </p>
                 <ul>
                     <li>width, height：四角形の大きさを、パネルのサイズを基準に小さく（1/8の大きさに）設定</li>
@@ -1387,7 +1377,8 @@ phina.define('Bomb', {
                     <li>y: -20：台紙の中心からY軸方向に-20ピクセルの位置に配置（非常に重要な設定）</li>
                 </ul>
                 <p>
-                    ちなみに、phina.jsでは、多くのグラフィックシステムと同様に、Y軸は下方向がプラスになります。そのため、-20は<strong>上に20ピクセルずらす</strong>という意味になります。
+                    ちなみに、phina.jsでは、多くのグラフィックシステムと同様に、Y軸は下方向がプラスになります。その
+                    ため、-20は<strong>上に20ピクセルずらす</strong>という意味になります。
                 </p>
             </div>
             <div class="p-block">
@@ -1403,46 +1394,50 @@ phina.define('Bomb', {
         fill: "#000088", // 塗りつぶし色 ≒'navy'
         stroke: '#ffffff', // 枠の色 ≒'white'
       }).addChildTo(this);</code></pre>
+                <p>ここでは、爆弾の「本体」にあたる、円形のパーツを作成しています。</p>
                 <p>
-                    ここでは、爆弾の「本体」にあたる、円形のパーツを作成しています。
+                    CircleShapeは、new phina.display.CircleShape({ ... }) の省略形であり、 RectangleShape と同様、
+                    phina.jsで手軽に円形の図形オブジェクトを生成するための便利な記法です。
                 </p>
                 <p>
-                    CircleShapeは、new phina.display.CircleShape({ ... }) の省略形であり、 RectangleShape と同様、phina.jsで手軽に円形の図形オブジェクトを生成するための便利な記法です。
-                </p>
-                <p>
-                    その際に、引数として{ ... } の中に設定情報を渡すことで、描画される円形の見た目を細かく指定することができます。今回は、以下のように設定しています。
+                    その際に、引数として{ ... } の中に設定情報を渡すことで、描画される円形の見た目を細かく指定すること
+                    ができます。今回は、以下のように設定しています。
                 </p>
                 <ul>
-                    <li>radius：円の半径を、パネルのサイズの1/4の大きさ（つまり直径をパネルのサイズの半分の大きさに）設定</li>
+                    <li>
+                        radius：円の半径を、パネルのサイズの1/4の大きさ（つまり直径をパネルのサイズの半分の大きさ
+                        に）設定
+                    </li>
                     <li>fill：塗りつぶし色を紺色（#000088 ≒ navy）に設定</li>
                     <li>stroke：枠線の色を白（#ffffff ≒ white）に設定</li>
                 </ul>
             </div>
             <div class="p-block">
                 <p>
-                    また、 RectangleShape の時と同様に、.addChildTo(this)でクラスに追加することで、初めて画面に登場します。
+                    また、 RectangleShape の時と同様に、.addChildTo(this)でクラスに追加することで、初めて画面に登場
+                    します。
                 </p>
             </div>
             <div class="p-block">
-                <p>
-                    これで、配置したパネルにランダムに爆弾を配置することができました。
-                </p>
-                <p>
-                    次のステップではいよいよ、パネルを開いて周りにある爆弾の数が表示される機能を実装します。
-                </p>
+                <p>これで、配置したパネルにランダムに爆弾を配置することができました。</p>
+                <p>次のステップではいよいよ、パネルを開いて周りにある爆弾の数が表示される機能を実装します。</p>
             </div>
 
 
             <h3>パネルを開く</h3>
             <div class="p-block">
-                <p>ここでは、下のスクリーンショットのように、パネルを開いて周りにある爆弾の数が表示されるようにします。</p>
+                <p>
+                    ここでは、下のスクリーンショットのように、パネルを開いて周りにある爆弾の数が表示されるようにしま
+                    す。
+                </p>
             </div>
             <div class="p-block">
 
             <img src="image\Panel-open.png" alt="タイルを開けたスクリーンショット" width="40%" />
 
             <p>
-                以下は、パネルを開けるために、これまでのコードにいくつかの追加と、それに伴う変更を加えたコードで す。前回同様、コード内の//* 追加や//* 変更と書かれた部分が、今回の変更点です。
+                以下は、パネルを開けるために、これまでのコードにいくつかの追加と、それに伴う変更を加えたコードで
+                す。前回までと同様、コード内の//* 追加や//* 変更と書かれた部分が、今回の変更点です。
             </p>
             <pre><code class="language-javascript">// phina.js をグローバル領域に展開
 phina.globalize();
@@ -1535,9 +1530,9 @@ phina.define('MainScene', {
     panel.num = bombs === 0 ? '' : bombs;
     Label({
       text: panel.num,
-      fill: '#ffffff', // 塗りつぶし色 ≒'white'
+      fill: '#ffffff', // 文字色 ≒'white'
     }).addChildTo(panel);
-    panel.fill = '#808080'; // ≒'gray'
+    panel.fill = '#808080'; // 塗りつぶし色 ≒'gray'
   },
   //* ここまで
 
@@ -1610,21 +1605,19 @@ phina.main(function() {
   });
   app.run();
 });</code></pre>
-                <p>
-                    このコードをコピーし、 main.jsに上書き、あるいは変更点を追記してください。
-                </p>
+                <p>このコードをコピーし、 main.jsに上書き、あるいは変更点を追記してください。</p>
             </div>
             <div class="p-block">
                 <p>
-                    今回は、MainSceneにパネルをクリックした際の動作を定義する、新しい機能（メソッド）を主に追加しています。
+                    今回は、MainSceneにパネルをクリックした際の動作を定義する、新しい機能（メソッド）を主に追加し
+                    ています。
                 </p>
-                <p>
-                    それでは、追加・変更した要素がどのような役割を持っているのか、詳しく見ていきましょう。
-                </p>
+                <p>それでは、追加・変更した要素がどのような役割を持っているのか、詳しく見ていきましょう。</p>
             </div>
 
-            <h4>追加部分の確認 - init: function()</h4>
-            <div class="code-block">
+
+            <h4>追加部分の確認 - initメソッド</h4>
+            <div class="p-block">
                 <pre><code class="language-Diff">  // コンストラクタ
   init: function() {
     // 親クラス初期化
@@ -1672,7 +1665,858 @@ phina.main(function() {
 +     //* 追加：参照用
 +     this.panelGroup = panelGroup;
   },</code></pre>
+                <p>この部分で、いくつかの追加を行っています。</p>
+                <p>まず、後にMainSceneをthisとして参照するために、selfに代入しています。</p>
+                <p>
+                    次に、パネルが既に開かれているかどうかのフラグ変数と、パネルをタッチできるようにしています。ま
+                    た、パネルのタッチイベントが発生した際にopenPanel関数を呼び出すようにしています。
+                </p>
+                <p>最後にpanelGroupを別の関数からも参照できるようにthis.panelGroupに代入しています。</p>
             </div>
+            <div class="p-block">
+                <p>それでは、それぞれ抜粋し、詳しく見ていきましょう。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     var self = this; //* 追加</code></pre>
+                <p>ここでは、MainSceneオブジェクト自身を指すthisを、selfという別の変数に一時的に保存しています。</p>
+                <p>
+                    これは、この後に出てくるpanel.onpointstartのようなコールバック関数（イベント処理など、後から呼
+                    び出される関数）の中でthisを使うと、そのthisがMainSceneではなく、別のもの（この場合はクリックさ
+                    れたpanel）を指してしまい、MainSceneのメソッド（openPanelなど）を呼び出せなくなる、という
+                    JavaScriptの仕様を回避するための、定番のテクニックです。
+                </p>
+                <p>
+                    selfという変数に入れておくことで、コールバック関数の中からでも、確実にMainScene自身を参照でき
+                    るようになります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+         //* 追加：開かれているかどうか
++         panel.isOpen = false;</code></pre>
+                <p>
+                    作成したパネル一つ一つに、開かれているかどうかのフラグを付け、そこにfalse（つまり開かれていな
+                    い）を設定しています。
+                </p>
+                <p>
+                    これにより、後ほどパネルが開かれた際にこの値をtrueに変更すれば、二重にパネルを開いてしまうのを防
+                    ぐ処理を追加することができます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+         // タッチ有効化
++         panel.setInteractive(true);</code></pre>
+                <p>パネルが、クリック（タッチ）に反応するようにしています。</p>
+                <p>
+                    これをtrue（肯定、つまり有効化）しておかないと、どんな設定をしても、どれだけクリックしてもうんと
+                    もすんとも言いません。必ず有効化しておきましょう。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+         // パネルタッチ時
++         panel.onpointstart = function() {
++           self.openPanel(panel);
++         }</code></pre>
+                <p>パネルがクリックされたときに、どんな処理を行うかを記述しています。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    onpointstartは、phina.jsの表示オブジェクトが持つ、特殊なプロパティです。ここに関数（function）
+                    を代入しておくことで、そのオブジェクトがクリック（またはタッチ）された瞬間に、代入した関数が自動
+                    的に呼び出されます。
+                </p>
+                <p>
+                    このような、特定のイベント発生時に実行されるように登録しておく関数のことを、一般的に「イベントリ
+                    スナー」や「イベントハンドラ」と呼びます。
+                </p>
+                </div>
+            <div class="p-block">
+                <p>肝心な、イベントリスナーとして登録した関数の中身は、 self.openPanel(panel); だけです。</p>
+                <p>
+                    これは、self（つまり、MainScene）の持っている、後述の openPanel という名前のメソッドを呼び出し
+                    ています。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     //* 追加：参照用
++     this.panelGroup = panelGroup;</code></pre>
+                <p>
+                    initメソッド内だけで有効なローカル変数のpanelGroupを、MainSceneオブジェクト自身のプロパティに
+                    しています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    なぜこれが必要なのかというと、initメソッドの中で var panelGroup = ... と宣言された panelGroup
+                    は、ローカル変数と呼ばれ、このinitメソッドの中でしか使えないからです。
+                </p>
+                <p>
+                    この状態で、後ほど作成するgetPanelメソッドなど、initメソッドの外側から panelGroup にアクセス
+                    しようとしても、「変数が見つかりません。」とエラーが発生してしまいます。
+                </p>
+                <p>
+                    そこで、 this.panelGroup = panelGroup; と記述することにより、initの外にあるgetPanelメソッドから
+                    も、パネルのグループを参照できるようになります。
+                </p>
+            </div>
+
+
+            <h4>パネルを開く関数 (openPanel) の追加</h4>
+            <div class="p-block">
+                <pre><code class="language-javascript">  //* 追加：パネルを開く処理
+  openPanel: function(panel) {
+    // 既に開かれていた何もしない
+    if (panel.isOpen) return;
+    // 開いたとフラグを立てる
+    panel.isOpen = true;
+    // タッチ不可にする
+    panel.setInteractive(false);
+    
+    var bombs = 0;
+    var indexs = [-1, 0, 1];
+    var self = this;
+    // 周りのパネルの爆弾数をカウント
+    indexs.each(function(i) {
+      indexs.each(function(j) {
+        var pos = Vector2(panel.x + i * GRID_SIZE, panel.y + j * GRID_SIZE);
+        var target = self.getPanel(pos);
+        if (target && target.isBomb) bombs++;
+      });
+    });
+    // パネルに数を表示
+    panel.num = bombs === 0 ? '' : bombs;
+    Label({
+      text: panel.num,
+      fill: '#ffffff', // 文字色 ≒'white'
+    }).addChildTo(panel);
+    panel.fill = '#808080'; // 塗りつぶし色 ≒'gray'
+  },
+  //* ここまで</code></pre>
+                <p>ここでは、MainSceneにopenPanelという新しいメソッド（クラスが持つ関数）を追加しています。</p>
+                <p>
+                    このメソッドは、先ほど設定したイベントリスナーによって、パネルがクリックされた際に呼び出されま
+                    す。引数として、クリックされたpanelオブジェクトそのものを受け取ります。
+                </p>
+                <p>
+                    具体的には、二重開封の防止、状態の更新、周囲の爆弾数のカウント、そして結果（数字や色）の表示を担
+                    当します。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>それでは、この一連の処理を、詳しく見ていきましょう。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">  //* 追加：パネルを開く処理
+  openPanel: function(panel) {</code></pre>
+                <p>
+                    先ほどonpointstartの中で呼び出したself.openPanel(panel)の、openPanelメソッド本体をここで定義し
+                    ています。
+                </p>
+                <p>
+                    MainSceneクラスに、openPanelという名前の新しい機能（メソッド）を追加する、というイメージで
+                    す。
+                </p>
+                <p>
+                    function(panel)の部分からわかる通り、onpointstartから呼び出す際に渡された、クリックされたpanel
+                    オブジェクトを、このメソッドは引数として受け取ることができます。これにより、このメソッドの中で
+                    は、引数panelを操作することで、クリックされた特定のパネルに対して処理を行えるようになります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    // 既に開かれていた何もしない
+    if (panel.isOpen) return;</code></pre>
+                <p>
+                    openPanelメソッドの最初に、もしこのパネルが既に開かれていたら（つまり isOpen が true なら）、こ
+                    の先の処理は一切行わずにここで終了しなさい。という命令を記述しています。</p>
+                <p><strong>return;</strong>は、関数やメソッドの処理をその場で中断し、呼び出し元に戻るための命令です。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    このように、関数の冒頭で「処理を行うべきでない条件」を判定し、条件に一致したらすぐに処理を終了さ
+                    せる書き方を「ガード節」や「早期リターン」と呼びます。これにより、メインの処理を不必要なifの入れ
+                    子から解放し、コード全体をスッキリさせることができます。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    // 開いたとフラグを立てる
+    panel.isOpen = true;</code></pre>
+                <p>
+                    ガード節を抜けた（＝まだ開かれていない）パネルに対して、isOpenプロパティの値をtrue（開いた）に
+                    更新しています。
+                </p>
+                <p>
+                    一度trueに更新しておくことで、次に同じパネルがクリックされた際に、冒頭のガード節（if
+                    (panel.isOpen) return;）が機能し、二重開封が正しく防止されるのです。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    // タッチ不可にする
+    panel.setInteractive(false);</code></pre>
+                <p>
+                    一度開いたパネルは、もうクリック（タッチ）される必要がありません。そこで、setInteractive(false)を
+                    呼び出し、このパネルのインタラクティブな状態を解除（OFFに）します。
+                </p>
+                <p>
+                    これは、意図しない操作を防ぐだけでなく、無駄なクリック判定処理を減らすことにも繋がり、ゲーム全体
+                    のパフォーマンスをわずかに向上させる効果もあります。
+                </p>
+                <p>
+                    不要になったイベントリスナーは、こまめにOFFにする習慣をつけておくのが良いでしょう。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    var bombs = 0;</code></pre>
+                <p>
+                    クリックされたパネルの周囲にある爆弾の数を数えるための、カウンター用変数 bombs を用意していま
+                    す。
+                </p>
+                <p>
+                    まずは0を初期値として設定しておきます。これから周囲のパネルを一つずつチェックし、爆弾を見つける
+                    たびに、この数値を1ずつ増やしていくことになります。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    このように、計算を始める前にカウンターを0にリセット（初期化）するのは、プログラミングにおける基
+                    本的なお作法です。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    var indexs = [-1, 0, 1];</code></pre>
+                <p>
+                    クリックされたパネルの周囲8方向と、中心（自分自身）の合計9マスを調べるための、便利な配列を用意
+                    しています。
+                </p>
+                <p>
+                    このindexs配列を、この後に出てくる二重ループで使うことで、中心のパネルからの「相対的な位置」を
+                    簡単に作り出すことができます。
+                </p>
+                <p>
+                    例えば、ループ変数iとjがそれぞれ-1, 0, 1と変化することで、(i, j)の組み合わせは(-1,-1)(左上), (-1,0)
+                    (左), ..., (1,1)(右下)の9パターンを網羅します。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    var self = this;</code></pre>
+                <p>initメソッドの時にも登場した、thisが指す対象が変わってしまう問題を避けるためのおまじないです。</p>
+                <p>
+                    この後で使うeachメソッドのコールバック関数（function）の中では、thisがMainSceneを指さなくなっ
+                    てしまいます。
+                </p>
+                <p>
+                    そのため、あらかじめMainScene自身を指しているthisを、変数selfに退避させています。これにより、コ
+                    ールバック関数の内側からでも、selfを使って安全にMainSceneのメソッド（getPanelなど）を呼び出せ
+                    るようになります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    indexs.each(function(i) {
+      indexs.each(function(j) {</code></pre>
+                <p>
+                    先ほど用意したindexs配列（[-1, 0, 1]）を使い、周囲9マスを調べるための二重ループ処理を行っていま
+                    す。
+                </p>
+                <p>
+                    n.timesが0, 1, 2, ...という連番を生成するのに対し、ここで使われている<strong>.each()</strong>は、配列の要素を一つず
+                    つ順番に取り出して処理を行うための、phina.jsの便利なメソッドです。つまりこの場合は、iにもjに
+                    も-1, 0, 1が順番に入るということです。
+                </p>
+                <p>
+                    これにより、(i, j)の組み合わせは、先ほど確認した(-1, -1)から(1, 1)までの9パターンすべてが網羅される
+                    ことになります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">        var pos = Vector2(panel.x + i * GRID_SIZE, panel.y + j * GRID_SIZE);</code></pre>
+                <p>
+                    クリックされたパネルの座標(panel.x, panel.y)を基準に、調べるべき周囲のパネルの座標を計算していま
+                    す。
+                </p>
+                <p>
+                    また、Vector2(x, y)とは、X座標とY座標のペアをまとめて管理できる、phina.jsの便利なベクトルオブジ
+                    ェクトのことです。位置や速度、力の向きなどを表現するのによく使われます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>まず、中心となるパネルのX座標を基準にします。これが panel.x です。</p>
+                <p>
+                    次に、相対位置i（-1, 0, 1のいずれか）に、1マス分の大きさGRID_SIZEを掛け算します。これにより、
+                    「左に1マス分」「動かない」「右に1マス分」という、具体的な移動量が計算できます。これが i * GRID_SIZE です。
+                </p>
+                <p>
+                    最後に、panel.x + i * GRID_SIZE で、この2つを足し合わせることで、調べるべきパネルのX座標が求ま
+                    ります。
+                </p>
+                <p>Y座標も同様の考え方で計算することができます。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">        var target = self.getPanel(pos);</code></pre>
+                <p>
+                    先ほど計算した座標（pos）を元に、後ほど作成するgetPanelメソッドを使って、その位置に存在するパネ
+                    ルオブジェクトを探し出しています。
+                </p>
+                <p>
+                    その座標にパネルが存在すれば、target変数には、見つかったパネルオブジェクトが入ります。しかし、盤
+                    面の外など、その座標にパネルが存在しなければ、target変数には<strong>null（何もない）</strong>が入ります。
+                </p>
+                <p>
+                    このtarget変数を次のif文で使うことで、盤面の範囲外をチェックしてしまうエラーを防ぎます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">        if (target && target.isBomb) bombs++;</code></pre>
+                <p>このif文で、見つかったtargetが「存在する」かつ「爆弾である」かどうかを判定しています。</p>
+                </div>
+            <div class="p-block">
+                <p>
+                    まず、targetでその位置にパネルが本当に存在するかを確認しています（盤面の端だと存在しない場合があ
+                    るため）。
+                </p>
+                <p>次に、target.isBombで見つかったパネルが爆弾であるかを確認します。</p>
+                <p>両方の条件を満たした場合にのみ、爆弾カウンターbombsの数を1つ増やします。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    また、その間にある&&は、「A and B」のように、両方の条件がtrueの場合にのみ、全体をtrueと評価す
+                    る演算子です。
+                </p>
+                <p>
+                    重要な特徴として、左側の条件（target）がfalse（またはnullなどfalseと見なされる値）だった場合、右
+                    側の条件（target.isBomb）は評価すらされずに処理が終了します。 これを「短絡評価」と呼びます。
+                </p>
+                <p>
+                    このおかげで、targetがnullの場合にnull.isBombという存在しないプロパティにアクセスしてエラーにな
+                    る、という事態を安全に回避できます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    // パネルに数を表示
+    panel.num = bombs === 0 ? '' : bombs;</code></pre>
+                <p>周囲の爆弾をすべて数え終えたら、その結果をパネルに記録しています。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    ここで使われている 条件 ? A : B という書き方は、三項演算子と呼ばれる、if文の省略形です。「もし条件
+                    がtrueならAを、falseならBを実行（代入）しなさい」という意味になります。
+                </p>
+                <p>
+                    今回のコードに当てはめてみると、「もし、周囲の爆弾の数（bombs）が0と等しい（===）なら、
+                    panel.numに空の文字列（''）を、そうでなければbombsの数そのものを代入しなさい」という処理になり
+                    ます。
+                </p>
+                <p>
+                    なぜ爆弾が0個の時に0ではなく空の文字列（''）にしているかというと、マインスイーパのルールでは、周
+                    りに爆弾がないマスには数字を表示しないからです。この一行で、そのルールをスマートに実装しているわ
+                    けです。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    Label({
+      text: panel.num,
+      fill: '#ffffff', // 文字色 ≒'white'
+    }).addChildTo(panel);</code></pre>
+                <p>
+                    phina.jsのLabelクラスを使って、表示する数字のオブジェクトを生成しています。それぞれ以下のように
+                    設定しています。
+                </p>
+                <ul>
+                    <li>text: panel.num：表示するテキストを、先ほど決めたpanel.numの値に設定</li>
+                    <li>fill: '#ffffff': 文字の色を白（#ffffff ≒ white）に設定。</li>
+                </ul>
+            </div>
+            <div class="p-block">
+                <p>
+                    そして、最後に.addChildTo(panel)で、作成したLabelオブジェクトを、MainScene（this）ではなく、
+                    panelオブジェクト自身の子要素として追加しています。
+                </p>
+                <p>
+                    これにより、数字のラベルがパネルの中央に表示され、今後もしパネルが動くようなことがあっても、数字
+                    はパネルと一緒に移動するようになります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    panel.fill = '#808080'; // 塗りつぶし色 ≒'gray'</code></pre>
+                <p>最後に、開かれたパネル自体の塗りつぶし色を灰色に変更しています。</p>
+                <p>
+                    これにより、プレイヤーは視覚的にどのパネルが開かれたのかを瞬時に判別できるようになり、ゲームの操
+                    作性が向上します
+                </p>
+            </div>
+
+
+            <h4>パネル捜索関数（getPanel）の追加</h4>
+            <div class="p-block">
+                <pre><code class="language-javascript">  //* 追加：指定された位置のパネルを得る
+  getPanel: function(pos) {
+    var result = null;
+    
+    this.panelGroup.children.some(function(panel) {
+      if (panel.position.equals(pos)) {
+        result = panel;
+        return true;
+      }
+    });
+    return result;
+    //* ここまで</code></pre>
+                <p>ここでは、MainSceneにgetPanelという新しいメソッドを追加しています。</p>
+                <p>
+                    このメソッドは、先ほど作成したopenPanelメソッドの中で「指定した座標に、どのパネルが存在する
+                    か」を探し出すために使われる、補助的な役割を持っています。
+                </p>
+                <p>
+                    引数としてpos（Vector2オブジェクトで表された座標）を受け取り、その座標にピッタリ一致するパネル
+                    オブジェクトを探し出して返します。もし見つからなければnull（何もない）を返します。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>それでは、このメソッドがどのようにしてパネルを探し出しているのか、その中身を見ていきましょう。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">  getPanel: function(pos) {</code></pre>
+                <p>
+                    openPanelメソッドの中で呼び出したself.getPanel(pos)の、getPanelメソッド本体を、先ほどと同様
+                    に、ここで定義しています。
+                </p>
+                <p>このメソッドの役割は、「指定された座標にどのパネルがあるかを探し出す」ことです。</p>
+                <p>
+                    function(pos)の部分で、openPanelから渡された探したいパネルの座標情報（Vector2オブジェクト）
+                    を、引数posとして受け取っています。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    var result = null;</code></pre>
+                <p>
+                    getPanelメソッドの返り値（戻り値）を格納するための変数resultを用意し、初期値としてnullを代入して
+                    います。
+                </p>
+                <p>nullは、「何もない」「空っぽ」を意味する特殊な値です。</p>
+                <p>
+                    このように、関数の最初に結果格納用の変数をnull（または0や空文字など）で初期化しておき、条件に一
+                    致した場合にだけその変数に値を上書きし、最後にその変数を返す、という処理の流れは、プログラミング
+                    で非常によく使われる基本的なパターンの一つです。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    this.panelGroup.children.some(function(panel) {</code></pre>
+                <p>
+                    この一行で、90個すべてのパネルを一つずつチェックし、「指定された座標と一致するパネル」を探し出
+                    しています。コードが長いので、.（ドット）で区切って、左から順番に見ていきましょう。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    まず、 this.panelGroup は initメソッド でプロパティとして保存しておいた、パネルのグループ全体を参
+                    照しています。
+                </p>
+                <p>
+                    次に、.childrenプロパティにアクセスします。ここには、panelGroupの中に含まれているすべての子要
+                    素（今回は90個のパネルオブジェクト）が、配列として格納されています。
+                </p>
+                <p>最後に、.some(function(panel) { ... })で、その配列に対して.some()メソッドを実行します。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    .some()は、配列の要素を一つずつ取り出し、{}の中に書かれた処理を順番に実行していく、JavaScriptの
+                    便利な繰り返しメソッドです。しかし、ひとつ特殊なルールがあり、それが{}内の処理が一度でもtrueを返
+                    した時点で、繰り返しを即座に中断するというものです。
+                </p>
+                <p>
+                    今回のように「たくさんの中から、条件に合うものを1つだけ見つけたい」という場合に、無駄なループ処
+                    理を省けるため、非常に効率的なのです。（もし一度もtrueを返さなければ、someメソッド自身はfalseを
+                    返します）
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">      if (panel.position.equals(pos)) {
+        result = panel;
+        return true;
+      }</code></pre>
+                <p>
+                    まず if (panel.position.equals(pos)) で、panel.position（今チェックしているパネルの座標）と、引数
+                    で受け取ったpos（探している座標）が、X座標とY座標の両方とも完全に一致しているかを判定します。
+                </p>
+                <p>
+                    phina.jsのVector2オブジェクト同士を比較する際は、==ではなく、この.equals()メソッドを使うのが定
+                    石です。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>もし座標が一致した場合（.equals()がtrueを返した場合）、ifブロックの中の処理が実行されます。</p>
+                <p>
+                    まず result = panel で、最初 null だったresult変数に、見つかったパネルオブジェクトそのものを代入し
+                    ます。これで、捜索結果を保持できます。
+                </p>
+                <p>
+                    return true 次のこれが非常に重要です。 true を返すことで、.some()メソッドに対して「探していたもの
+                    が見つかったので、もうループを中断してOKです」と伝えています。
+                </p>
+                <p>これにより、残りのパネルをチェックする無駄な処理を省略できます。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    return result;</code></pre>
+                <p>someメソッドのループがすべて終わった後、最終的にこのgetPanelメソッドが返す値を決定します。</p>
+                <p>
+                    パネルが見つかった場合は、ループの途中でresultにパネルオブジェクトが代入されているので、そのパネ
+                    ルオブジェクトが返されます。
+                </p>
+                <p>
+                    ただし、パネルが見つからなかった場合は、ループは最後まで中断されず、resultの中身は初期値の<strong>nullの
+                    まま</strong>です。そのため、nullが返されます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>これで、パネルを開いて周囲の爆弾数を表示する、ゲームの基本的な機能が実装できました。</p>
+                <p>次のステップでは、マインスイーパ特有の「連鎖オープン」機能を実装していきます。</p>
+            </div>
+
+
+            <h3>パネルを連鎖で開く</h3>
+            <div class="p-block">
+                <p>
+                    ここでは、下のスクリーンショットのように、周りに爆弾がない場合にパネルを連鎖で開くようにします。
+                </p>
+            </div>
+            <div class="p-block">
+
+            <img src="image\Panel-chain-open.png" alt="タイルを連鎖で開けたスクリーンショット" width="40%" />
+
+            <p>
+                以下は、パネルを連鎖的に開けるために、これまでのコードにいくつかの追加と、それに伴う変更を加えた
+                コードです。これまでと同様、コード内の//* 追加や//* 変更と書かれた部分が、今回の変更点です。
+            </p>
+            <pre><code class="language-javascript">// phina.js をグローバル領域に展開
+phina.globalize();
+
+// 定数
+var GRID_SIZE = 70; // グリッドのサイズ
+var SCREEN_SPACE = 10; // 画面端の空白
+var PANEL_NUM_X = 9; // 横のパネル数
+var PANEL_NUM_Y = 10; // 縦のパネル数
+var PANEL_MARGIN_RATIO = 1.3; // 画面縦の空白の割合
+var PANEL_SIZE_RATIO = 0.9; // パネル大きさの割合
+var BOMB_NUM = 10; // 爆弾数
+var SCREEN_WIDTH = GRID_SIZE * PANEL_NUM_X + SCREEN_SPACE// 画面横サイズ
+var SCREEN_HEIGHT = GRID_SIZE * PANEL_NUM_Y * PANEL_MARGIN_RATIO + SCREEN_SPACE; // 画面縦サイズ
+var PANEL_SIZE = GRID_SIZE * PANEL_SIZE_RATIO; // パネルの大きさ
+var PANEL_OFFSET = (GRID_SIZE + SCREEN_SPACE) / 2; // オフセット値
+
+// メインシーン
+phina.define('MainScene', {
+  superClass: 'DisplayScene',
+  // コンストラクタ
+  init: function() {
+    // 親クラス初期化
+    this.superInit({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+    });
+    // 背景色
+    this.backgroundColor = '#808080'; // 背景色 ≒'gray'
+    // グリッド
+    var grid = Grid(GRID_SIZE * PANEL_NUM_X, PANEL_NUM_X);
+    // グループ
+    var panelGroup = DisplayElement().addChildTo(this);
+    // 爆弾位置をランダムに決めた配列を作成
+    var bombs = [];
+    (PANEL_NUM_X * PANEL_NUM_Y).times(function() {
+      bombs.push(false);
+    });
+    bombs.fill(true, 0, BOMB_NUM).shuffle();
+
+    var self = this;
+    // ピース配置
+    PANEL_NUM_X.times(function(spanX) {
+      PANEL_NUM_Y.times(function(spanY) {
+        // パネル作成
+        var panel = Panel().addChildTo(panelGroup);
+        // Gridを利用して配置
+        panel.x = grid.span(spanX) + PANEL_OFFSET;
+        panel.y = grid.span(spanY) + PANEL_OFFSET;
+        // パネルに爆弾情報を紐づける
+        panel.isBomb = bombs[spanX * PANEL_NUM_Y + spanY];
+        // 開かれているかどうか
+        panel.isOpen = false;
+        // タッチ有効化
+        panel.setInteractive(true);
+        // パネルタッチ時
+        panel.onpointstart = function() {
+          self.openPanel(panel);
+        }
+        // 爆弾なら表示
+        if (panel.isBomb) Bomb().addChildTo(panel);
+      });
+    });
+    // 参照用
+    this.panelGroup = panelGroup;
+  },
+
+  // パネルを開く処理
+  openPanel: function(panel) {
+    // 既に開かれていた何もしない
+    if (panel.isOpen) return;
+    // 開いたとフラグを立てる
+    panel.isOpen = true;
+    // タッチ不可にする
+    panel.setInteractive(false);
+
+    var bombs = 0;
+    var indexs = [-1, 0, 1];
+    var self = this;
+    // 周りのパネルの爆弾数をカウント
+    indexs.each(function(i) {
+      indexs.each(function(j) {
+        var pos = Vector2(panel.x + i * GRID_SIZE, panel.y + j * GRID_SIZE);
+        var target = self.getPanel(pos);
+        if (target && target.isBomb) bombs++;
+      });
+    });
+    // パネルに数を表示
+    panel.num = bombs === 0 ? '' : bombs;
+    Label({
+      text: panel.num,
+      fill: '#ffffff', // 文字色 ≒'white'
+    }).addChildTo(panel);
+    panel.fill = '#808080'; // 塗りつぶし色 ≒'gray'
+    //* 追加：周りに爆弾がなければ再帰的に調べる
+    if (bombs === 0) {
+      indexs.each(function(i) {
+        indexs.each(function(j) {
+          var pos = Vector2(panel.x + i * GRID_SIZE, panel.y + j * GRID_SIZE);
+          var target = self.getPanel(pos);
+          target && self.openPanel(target);
+        });
+      });
+    }
+    //* ここまで
+  },
+
+  // 指定された位置のパネルを得る
+  getPanel: function(pos) {
+    var result = null;
+    
+    this.panelGroup.children.some(function(panel) {
+      if (panel.position.equals(pos)) {
+        result = panel;
+        return true;
+      }
+    });
+    return result;
+  },
+});
+
+// パネルクラス
+phina.define('Panel', {
+  // RectangleShapeを継承
+  superClass: 'RectangleShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        width: PANEL_SIZE,
+        height: PANEL_SIZE,
+        fill: '#c0c0c0', // 塗りつぶし色 ≒'silver'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+        cornerRadius: 2, // 角の丸み
+      });
+    },
+});
+
+phina.define('Bomb', {
+  // Shapeを継承
+  superClass: 'Shape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        width: GRID_SIZE,
+        height: GRID_SIZE,
+        backgroundColor: 'transparent',
+      });
+      // 導線
+      RectangleShape({
+        width: PANEL_SIZE / 8,
+        height: PANEL_SIZE / 8,
+        fill: "#000088", // 塗りつぶし色 ≒'navy'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+        y: -20,
+      }).addChildTo(this);
+      // 本体
+      CircleShape({
+        radius: PANEL_SIZE / 4,
+        fill: "#000088", // 塗りつぶし色 ≒'navy'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+      }).addChildTo(this);
+    },
+});
+
+// メイン
+phina.main(function() {
+  var app = GameApp({
+    startLabel: 'main', // メイン画面からスタート
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+  });
+  app.run();
+});</code></pre>
+                <p>このコードをコピーし、 main.jsに上書き、あるいは変更点を追記してください。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    今回の変更点は一箇所のみです。openPanelメソッドの中で、「もし開いたパネルの周囲の爆弾数が0だっ
+                    たら、その周りの8方向のパネルに対しても、自分自身（openPanel）を呼び出す」という処理を追加しま
+                    す。
+                </p>
+                <p>それでは、追加・変更した要素がどのような役割を持っているのか、詳しく見ていきましょう。</p>
+            </div>
+
+            <h4>周りに爆弾がない場合の処理の追加</h4>
+            <div class="code-block">
+                <pre><code class="language-javascript">    //* 追加：周りに爆弾がなければ再帰的に調べる
+    if (bombs === 0) {
+      indexs.each(function(i) {
+        indexs.each(function(j) {
+          var pos = Vector2(panel.x + i * GRID_SIZE, panel.y + j * GRID_SIZE);
+          var target = self.getPanel(pos);
+          target && self.openPanel(target);
+        });
+      });
+    }
+    //* ここまで</code></pre>
+                <p>openPanelメソッドの最後に、if (bombs === 0)というifブロックを追加しています。</p>
+                <p>このとき、まず「クリックされたパネルの周囲の爆弾数が0だった場合」という条件で分岐します。</p>
+                <p>
+                    次に、条件に一致した場合、以前にも使った二重ループで、周囲8方向のパネルを一つずつチェックしてい
+                    きます。
+                </p>
+                <p>
+                    そして、 target && self.openPanel(target); が、この機能の心臓部です。target（隣のパネル）が存在す
+                    る場合に、その隣のパネルに対して、自分自身であるopenPanelメソッドを再度呼び出しています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>なぜ、これが連鎖になるのかを段階的に説明していきます。</p>
+                <p>
+                    まず、Aというパネル（爆弾数0）が開かれます。そのAは、隣にあるパネルBに対してopenPanel(B)を呼
+                    び出します。
+                </p>
+                <p>
+                    呼び出されたBも爆弾数が0だった場合、Bはさらにその隣のパネルCに対してopenPanel(C)を呼び出しま
+                    す。
+                </p>
+                <p>
+                    そこで、もしCの爆弾数が1だった場合、Cは数字を表示して処理を終了します。すると、処理はBに戻り、
+                    Bはまた別の隣のパネルの処理を続け...
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    このように、「爆弾数が0だったら、隣のパネルを開く」という処理が、まるでドミノ倒しのように次々と
+                    伝播していくことで、あの連鎖オープンが実現されているのです。
+                </p>
+                <p>
+                    この、あるメソッドが自分自身を呼び出すテクニックを「再帰呼び出し」と呼び、複雑な処理を非常にシン
+                    プルに記述できる、強力な手法です。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    それでは、このメソッドがどのようにしてパネルを連鎖的に開いていっているのか、その中身をさらに詳し
+                    く見ていきましょう。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    //* 追加：周りに爆弾がなければ再帰的に調べる
+    if (bombs === 0) {</code></pre>
+                <p>このif文は、再帰呼び出しを続けるか、止めるかを決定する、非常に重要な条件分岐です。</p>
+                <p>
+                    bombs === 0、つまり「周囲の爆弾が0個」という条件を満たした場合にのみ、さらに周囲のパネルを開
+                    く処理（再帰呼び出し）が実行されます。
+                </p>
+                <p>
+                    逆に、周囲に1つでも爆弾があるパネルは、この条件を満たさないため、ここで処理が終了します。これ
+                    が、再帰の無限ループを防ぎ、連鎖を正しく停止させるための「終了条件」の役割を果たしているのです。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">      indexs.each(function(i) {
+        indexs.each(function(j) {</code></pre>
+                <p>
+                    if文の条件を満たした場合、openPanelメソッドの前半で使ったのと全く同じ二重ループ処理で、周囲9マ
+                    スを再度チェックしていきます。
+                </p>
+                <p>
+                    このループで、先ほど確認した(-1, -1)から(1, 1)までの9パターンの相対位置をすべて網羅し、次に開くべ
+                    き隣接パネルを一つずつ特定していきます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">          var pos = Vector2(panel.x + i * GRID_SIZE, panel.y + j * GRID_SIZE);</code></pre>
+                <p>こちらも、openPanelメソッドの前半で登場したのと全く同じ計算式です。</p>
+                <p>
+                    中心となるパネル（panel）の座標を基準に、ループで生成した相対位置（i, j）を使って、調べるべき周囲
+                    のパネルの絶対座標を算出しています。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">          var target = self.getPanel(pos);</code></pre>
+                <p>これも、openPanelメソッドの前半部分と全く同じ処理です。</p>
+                <p>
+                    計算した座標（pos）を、自作のヘルパーメソッドであるgetPanelに渡すことで、その位置に対応するパネ
+                    ルオブジェクトを取得しています。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">          target && self.openPanel(target);</code></pre>
+                <p>これがこの機能の心臓部であり、「再帰呼び出し」が行われている部分です。</p>
+                <p>
+                    まず、 target && ... で target が null でないこと（盤面の端などで、パネルがちゃんと存在すること）を
+                    確認しています。
+                </p>
+                <p>
+                    ここで重要なのは、呼び出された側のopenPanelメソッドも、必ず冒頭のif (panel.isOpen) return;とい
+                    うガード節から処理を開始するという点です。
+                </p>
+                <p>
+                    一度開かれたパネルに対しては、このガード節が機能して即座に処理が終了するため、同じパネルを何度も
+                    開いて無限ループに陥る、という事態が防がれています。
+                </p>
+                <p>
+                    この「終了条件（ガード節）」と「再帰呼び出し」の組み合わせが、安全で強力な再帰処理を実現している
+                    のです。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>これで、周囲に爆弾がない場合にパネルが連鎖して開く、マインスイーパの最も特徴的ともいえるような機能が実装できました。</p>
+                <p>次のステップでは、ついにマインスイーパの勝敗を決める、ゲームオーバーとクリア処理を追加します。</p>
+            </div>
+
 
             <!-- ここまでで本文終了 -->
 
