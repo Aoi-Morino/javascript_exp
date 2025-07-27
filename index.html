@@ -1568,6 +1568,7 @@ phina.define('Panel', {
     },
 });
 
+// 爆弾クラス
 phina.define('Bomb', {
   // Shapeを継承
   superClass: 'Shape',
@@ -2053,7 +2054,7 @@ phina.main(function() {
 
             <div class="code-block">
                 <pre><code class="language-javascript">    panel.fill = '#808080'; // 塗りつぶし色 ≒'gray'</code></pre>
-                <p>最後に、開かれたパネル自体の塗りつぶし色を灰色に変更しています。</p>
+                <p>最後に、開かれたパネル自体の塗りつぶし色を灰色(#808080 ≒ gray)に変更しています。</p>
                 <p>
                     これにより、プレイヤーは視覚的にどのパネルが開かれたのかを瞬時に判別できるようになり、ゲームの操
                     作性が向上します
@@ -2343,6 +2344,7 @@ phina.define('Panel', {
     },
 });
 
+// 爆弾クラス
 phina.define('Bomb', {
   // Shapeを継承
   superClass: 'Shape',
@@ -2390,6 +2392,7 @@ phina.main(function() {
                 </p>
                 <p>それでは、追加・変更した要素がどのような役割を持っているのか、詳しく見ていきましょう。</p>
             </div>
+
 
             <h4>周りに爆弾がない場合の処理の追加</h4>
             <div class="code-block">
@@ -2516,6 +2519,977 @@ phina.main(function() {
                 <p>これで、周囲に爆弾がない場合にパネルが連鎖して開く、マインスイーパの最も特徴的ともいえるような機能が実装できました。</p>
                 <p>次のステップでは、ついにマインスイーパの勝敗を決める、ゲームオーバーとクリア処理を追加します。</p>
             </div>
+
+
+            <h3>ゲームオーバーとクリア処理</h3>
+            <div class="p-block">
+                <p>
+                    ここでは、下のスクリーンショットのように、ゲームオーバーの処理とゲームクリアの処理を追加していきます。
+                </p>
+            </div>
+            <div class="p-block">
+
+            <img src="image\gameover_Screen.png" alt="ゲームオーバー時のスクリーンショット" width="40%" />
+
+            <p>
+                以下は、ゲームオーバーとゲームクリアの処理のために、これまでのコードにいくつかの追加と、それに伴う変更を加えた
+                コードです。これまでと同様、コード内の//* 追加や//* 変更と書かれた部分が、今回の変更点です。
+            </p>
+            <pre><code class="language-javascript">// phina.js をグローバル領域に展開
+phina.globalize();
+
+// 定数
+var GRID_SIZE = 70; // グリッドのサイズ
+var SCREEN_SPACE = 10; // 画面端の空白
+var PANEL_NUM_X = 9; // 横のパネル数
+var PANEL_NUM_Y = 10; // 縦のパネル数
+var PANEL_MARGIN_RATIO = 1.3; // 画面縦の空白の割合
+var PANEL_SIZE_RATIO = 0.9; // パネル大きさの割合
+var BOMB_NUM = 10; // 爆弾数
+var SCREEN_WIDTH = GRID_SIZE * PANEL_NUM_X + SCREEN_SPACE// 画面横サイズ
+var SCREEN_HEIGHT = GRID_SIZE * PANEL_NUM_Y * PANEL_MARGIN_RATIO + SCREEN_SPACE; // 画面縦サイズ
+var PANEL_SIZE = GRID_SIZE * PANEL_SIZE_RATIO; // パネルの大きさ
+var PANEL_OFFSET = (GRID_SIZE + SCREEN_SPACE) / 2; // オフセット値
+
+// メインシーン
+phina.define('MainScene', {
+  superClass: 'DisplayScene',
+  // コンストラクタ
+  init: function() {
+    // 親クラス初期化
+    this.superInit({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+    });
+    // 背景色
+    this.backgroundColor = '#808080'; // 背景色 ≒'gray'
+    //* 追加：タッチ不可に
+    this.setInteractive(false);
+    // グリッド
+    var grid = Grid(GRID_SIZE * PANEL_NUM_X, PANEL_NUM_X);
+    // グループ
+    var panelGroup = DisplayElement().addChildTo(this);
+    // 爆弾位置をランダムに決めた配列を作成
+    var bombs = [];
+    (PANEL_NUM_X * PANEL_NUM_Y).times(function() {
+      bombs.push(false);
+    });
+    bombs.fill(true, 0, BOMB_NUM).shuffle();
+
+    var self = this;
+    // ピース配置
+    PANEL_NUM_X.times(function(spanX) {
+      PANEL_NUM_Y.times(function(spanY) {
+        // パネル作成
+        var panel = Panel().addChildTo(panelGroup);
+        // Gridを利用して配置
+        panel.x = grid.span(spanX) + PANEL_OFFSET;
+        panel.y = grid.span(spanY) + PANEL_OFFSET;
+        // パネルに爆弾情報を紐づける
+        panel.isBomb = bombs[spanX * PANEL_NUM_Y + spanY];
+        // 開かれているかどうか
+        panel.isOpen = false;
+        // タッチ有効化
+        panel.setInteractive(true);
+        // パネルタッチ時
+        panel.onpointstart = function() {
+          self.openPanel(panel);
+          //* 追加：クリア判定
+          if (self.oCount === PANEL_NUM_X * PANEL_NUM_Y - BOMB_NUM) {
+            // ラベル表示
+            Label({
+              text: 'GOOD JOB!',
+              fill: 'white',
+            }).addChildTo(self).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));
+            // パネルを選択不可に
+            self.panelGroup.children.each(function(panel) {
+              panel.setInteractive(false);
+            });
+          }
+          //* ここまで
+        };
+        //! 削除：爆弾なら表示
+        //if (panel.isBomb) Bomb().addChildTo(panel);
+      });
+    });
+    // 参照用
+    this.panelGroup = panelGroup;
+    //* 追加：クリア判定用
+    this.oCount = 0;
+  },
+    //* 追加：画面タッチ可能な場合
+  onpointstart: function() {
+    // 再スタート
+    this.exit({
+      nextLabel: 'main',  
+    });  
+  },
+  //* ここまで
+  // パネルを開く処理
+  openPanel: function(panel) {
+    //* 追加：爆弾ならゲームオーバー
+    if (panel.isBomb) {
+      Explosion().addChildTo(panel);
+      this.showAllBombs();
+      return;
+    }
+    //* ここまで
+    // 既に開かれていた何もしない
+    if (panel.isOpen) return;
+    // 開いたとフラグを立てる
+    panel.isOpen = true;
+    this.oCount++; //* 追加
+    // タッチ不可にする
+    panel.setInteractive(false);
+
+    var bombs = 0;
+    var indexs = [-1, 0, 1];
+    var self = this;
+    // 周りのパネルの爆弾数をカウント
+    indexs.each(function(i) {
+      indexs.each(function(j) {
+        var pos = Vector2(panel.x + i * GRID_SIZE, panel.y + j * GRID_SIZE);
+        var target = self.getPanel(pos);
+        if (target && target.isBomb) bombs++;
+      });
+    });
+    // パネルに数を表示
+    panel.num = bombs === 0 ? '' : bombs;
+    Label({
+      text: panel.num,
+      fill: '#ffffff', // 文字色 ≒'white'
+    }).addChildTo(panel);
+    panel.fill = '#808080'; // 塗りつぶし色 ≒'gray'
+    // 周りに爆弾がなければ再帰的に調べる
+    if (bombs === 0) {
+      indexs.each(function(i) {
+        indexs.each(function(j) {
+          var pos = Vector2(panel.x + i * GRID_SIZE, panel.y + j * GRID_SIZE);
+          var target = self.getPanel(pos);
+          target && self.openPanel(target);
+        });
+      });
+    }
+  },
+
+  // 指定された位置のパネルを得る
+  getPanel: function(pos) {
+    var result = null;
+    
+    this.panelGroup.children.some(function(panel) {
+      if (panel.position.equals(pos)) {
+        result = panel;
+        return true;
+      }
+    });
+    return result;
+  },
+
+  //* 追加：爆弾を全て表示する
+  showAllBombs: function() {
+    var self = this;
+
+    this.panelGroup.children.each(function(panel) {
+      panel.setInteractive(false);
+
+      if (panel.isBomb) {
+        Bomb().addChildTo(panel);
+        panel.tweener.clear().scaleTo(1.2, 100)
+                     .scaleTo(1.0, 100)
+                     .call(function() {
+                        // ラベル表示
+                        Label({
+                          text: 'TOUCH TO RESTART',
+                          fill: 'white',
+                        }).addChildTo(self).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));
+                        // 画面をタッチ可能に
+                        self.setInteractive(true);
+                     });
+      }
+    });
+  },
+  //* ここまで
+});
+
+// パネルクラス
+phina.define('Panel', {
+  // RectangleShapeを継承
+  superClass: 'RectangleShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        width: PANEL_SIZE,
+        height: PANEL_SIZE,
+        fill: '#c0c0c0', // 塗りつぶし色 ≒'silver'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+        cornerRadius: 2, // 角の丸み
+      });
+    },
+});
+
+// 爆弾クラス
+phina.define('Bomb', {
+  // Shapeを継承
+  superClass: 'Shape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        width: GRID_SIZE,
+        height: GRID_SIZE,
+        backgroundColor: 'transparent',
+      });
+      // 導線
+      RectangleShape({
+        width: PANEL_SIZE / 8,
+        height: PANEL_SIZE / 8,
+        fill: "#000088", // 塗りつぶし色 ≒'navy'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+        y: -20,
+      }).addChildTo(this);
+      // 本体
+      CircleShape({
+        radius: PANEL_SIZE / 4,
+        fill: "#000088", // 塗りつぶし色 ≒'navy'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+      }).addChildTo(this);
+    },
+});
+
+//* 追加：爆発クラス
+phina.define('Explosion', {
+  // StarShapeを継承
+  superClass: 'StarShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        radius: (PANEL_SIZE + 5) / 2,
+        sides: 10,
+        sideIndent: 0.75,
+        rotation: 15,
+        fill: "red",
+        stroke: "yellow",
+      });
+    },
+});
+//* ここまで
+
+// メイン
+phina.main(function() {
+  var app = GameApp({
+    startLabel: 'main', // メイン画面からスタート
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+  });
+  app.run();
+});</code></pre>
+                <p>このコードをコピーし、 main.jsに上書き、あるいは変更点を追記してください。</p>
+            </div>
+            <div class="p-block">
+                <p>今回は、ゲームとしての勝敗判定や演出を加えるため、多くの追加・変更を行っています。</p>
+                <p>まず、爆弾パネルをクリックした際に、すべての爆弾を表示し、リスタートを促す機能を追加します。</p>
+                <p>そして、爆弾以外のすべてのパネルを開いた際に、クリアメッセージを表示する機能を追加します。</p>
+                <p>さらに、ゲーム開始時に爆弾が見えないように、表示処理をopenPanelメソッド内に移動します。</p>
+                <p>最後に、ゲームオーバー時に爆発エフェクトを表示する、新しいExplosionクラスを追加します。</p>
+                <p>
+                    <span class="underline-orange">
+                        注： 今回のステップのコードは、参考にさせていただいたサイトのものを元にしていますが、サイト側の
+                        分割解説では省略されていた部分も含まれています。このチュートリアルでは、その部分も含めて詳しく解
+                        説していきます。
+                    </span>
+                </p>
+            </div>
+            <div class="p-block">
+                <p>それでは、追加・変更した要素がどのような役割を持っているのか、詳しく見ていきましょう。</p>
+            </div>
+
+
+            <h4>追加部分の確認 - MainScene_initメソッド</h4>
+            <div class="code-block">
+                <pre><code class="language-Diff">  // コンストラクタ
+  init: function() {
+    // 親クラス初期化
+    this.superInit({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+    });
+    // 背景色
+    this.backgroundColor = '#808080'; // 背景色 ≒'gray'
++     //* 追加：タッチ不可に
++     this.setInteractive(false);
+    // グリッド
+    var grid = Grid(GRID_SIZE * PANEL_NUM_X, PANEL_NUM_X);
+    // グループ
+    var panelGroup = DisplayElement().addChildTo(this);
+    // 爆弾位置をランダムに決めた配列を作成
+    var bombs = [];
+    (PANEL_NUM_X * PANEL_NUM_Y).times(function() {
+      bombs.push(false);
+    });
+    bombs.fill(true, 0, BOMB_NUM).shuffle();</code></pre>
+                <p>initメソッドの、パネルを配置するループ処理が始まる前の部分に、一行だけコードが追加されました。</p>
+                <p>この変更は、ゲームが終了した後のリスタート機能に関わる、重要な準備作業です。</p>
+                <p>それでは、この追加された一行がどのような役割を持っているのか、詳しく見ていきましょう。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     //* 追加：タッチ不可に
++     this.setInteractive(false);</code></pre>
+                <p>initメソッドの冒頭で、MainScene自身をクリック（タッチ）できないように設定しています。</p>
+                <p>この一行は、この後のゲームオーバー処理やクリア処理を実装する上での、重要な伏線となります。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    なぜ、最初にOFFにするのかというと、ゲームをプレイしている最中にクリックに反応してほしいのは、
+                    個々の「パネル」であって、背景である「シーン」ではないからです。もしシーンがクリックに反応してし
+                    まうと、意図しない動作の原因になってしまいます。
+                </p>
+                <p>
+                    そこで、まずゲーム開始時点では、シーン自身はクリックできないようにfalse（OFF）に設定しておきま
+                    す。
+                </p>
+                <p>
+                    そして、ゲームオーバーやゲームクリアが表示された後に、この設定をtrue（ON）に切り替えることで、
+                    初めて「画面のどこかをタッチしてリスタート」という機能を実現できるのです。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    このコードは、元の参考サイトでは解説が省略されていましたが、ゲームのリスタート機能を正しく実装す
+                    るために不可欠な一行です。
+                </p>
+            </div>
+
+
+            <h4>追加部分の確認 - ピース配置メソッド</h4>
+            <div class="p-block">
+                <pre><code class="language-Diff">    // ピース配置
+    PANEL_NUM_X.times(function(spanX) {
+      PANEL_NUM_Y.times(function(spanY) {
+        // パネル作成
+        var panel = Panel().addChildTo(panelGroup);
+        // Gridを利用して配置
+        panel.x = grid.span(spanX) + PANEL_OFFSET;
+        panel.y = grid.span(spanY) + PANEL_OFFSET;
+        // パネルに爆弾情報を紐づける
+        panel.isBomb = bombs[spanX * PANEL_NUM_Y + spanY];
+        // 開かれているかどうか
+        panel.isOpen = false;
+        // タッチ有効化
+        panel.setInteractive(true);
+        // パネルタッチ時
+        panel.onpointstart = function() {
+          self.openPanel(panel);
++           //* 追加：クリア判定
++           if (self.oCount === PANEL_NUM_X * PANEL_NUM_Y - BOMB_NUM) {
++             // ラベル表示
++             Label({
++               text: 'GOOD JOB!',
++               fill: 'white',
++             }).addChildTo(self).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));
++             // パネルを選択不可に
++             self.panelGroup.children.each(function(panel) {
++               panel.setInteractive(false);
++             });
++           }
++           //* ここまで
+        };
+-         //! 削除：爆弾なら表示
+-         //if (panel.isBomb) Bomb().addChildTo(panel);
+      });
+    });</code></pre>
+                <p>
+                    パネルを90個配置する二重ループの中では、2つの重要な変更を行っています。それが、ゲームクリア判定
+                    処理の追加と、ゲーム開始時の爆弾表示処理の削除です。
+                </p>
+                <p>
+                    これらは、マインスイーパを「ゲーム」として成立させるための、非常に重要な変更です。それぞれ詳しく
+                    見ていきましょう。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+           //* 追加：クリア判定
++           if (self.oCount === PANEL_NUM_X * PANEL_NUM_Y - BOMB_NUM) {</code></pre>
+                <p>
+                    パネルを開くopenPanelメソッドを呼び出した直後に、このif文でゲームクリアの条件を満たしたかどうか
+                    を毎回チェックしています。
+                </p>
+                <p>ここで、===（等しい）の左右を比較している内容は、以下の通りです。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    self.oCount は、後ほど定義する「開かれたパネルの数を数えるカウンター」です。パネルが1枚開かれる
+                    たびに、このカウンターの数が1ずつ増えていきます。
+                </p>
+                <p>
+                    PANEL_NUM_X * PANEL_NUM_Y - BOMB_NUM これは、「爆弾ではないパネルの総数」を計算してい
+                    ます。（全体のパネル数 90個 - 爆弾の数 10個 = 80個）
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    つまり、このif文は「開かれたパネルの数」と「安全なパネルの総数」が等しくなったかどうかを判定して
+                    いるのです。
+                </p>
+                <p>
+                    この条件が満たされた瞬間、それはつまり「すべての安全なパネルが開かれた」ことを意味し、ゲームクリ
+                    アとなります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+             Label({
++               ...
++             }).addChildTo(self).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));</code></pre>
+                <p>クリアメッセージのラベルを表示する位置を、.setPosition()メソッドで指定しています。</p>
+                <p>
+                    .setPosition()には引数としてX座標とY座標を渡しますが、今回は特にY座標の計算が少し複雑になってい
+                    ます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    まず、 SCREEN_WIDTH / 2 はシンプルに、画面の横幅のちょうど半分の位置を指します。これにより、
+                    ラベルは左右方向の中央に配置されます。
+                </p>
+                <p>
+                    次の、 SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2) の一見
+                    複雑な計算式は、ゲーム盤面の下にある余白スペースの、ちょうど真ん中の高さを正確に算出するためのも
+                    のです。
+                </p>
+                <p>
+                    私たちは以前、SCREEN_HEIGHTを定義する際に、PANEL_MARGIN_RATIO（1.3）を使って、パネル
+                    全体の高さに加えて30%分の余白を追加しました。この計算式は、その余白部分だけを正確に計算し、そ
+                    の中心座標を割り出しています。
+                </p>
+                <p>
+                    これにより、ラベルがゲーム盤面に重なることなく、画面下部の空きスペースに常にバランス良く表示され
+                    るようになっています。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+               text: 'GOOD JOB!',
++               fill: 'white',</code></pre>
+                <p>Labelクラスに渡す設定情報です。</p>
+                <p>textプロパティで、画面に表示する文字列を「GOOD JOB!」に指定しています。</p>
+                <p>fillプロパティでは、そのテキストの色を白（#ffffff ≒ white）に指定しています。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+             // パネルを選択不可に
++             self.panelGroup.children.each(function(panel) {
++               panel.setInteractive(false);
++             });</code></pre>
+                <p>
+                    ゲームがクリアされたときに、もうそれ以上パネルをクリックできないように、すべてのパネルを操作不能
+                    な状態にしています。
+                </p>
+                <p>
+                    self.panelGroup.childrenで、90個すべてのパネルが格納された配列にアクセスし、.each()メソッドを使
+                    って、パネルを一つずつ順番に処理していきます。
+                </p>
+                <p>
+                    そして、ループの中でpanel.setInteractive(false)を実行することで、個々のパネルのインタラクティブ状
+                    態をOFFにしています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    これにより、クリアメッセージが表示された後に、プレイヤーが誤って他のパネルをクリックしてしまうの
+                    を防ぎます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">-         //! 削除：爆弾なら表示
+-         //if (panel.isBomb) Bomb().addChildTo(panel);</code></pre>
+                <p>
+                    最後に、これまでデバッグ（動作確認）のために使っていた、ゲーム開始時にすべての爆弾を表示する処理
+                    を削除します。
+                </p>
+                <p>マインスイーパは、本来どこに爆弾があるか分からない状態でスタートするゲームです。</p>
+                <p>
+                    この一行を削除することで、初めてプレイヤーが爆弾の位置を知らないという、本来あるべきゲームの形が
+                    完成します。爆弾は、パネルが開かれた時に（それが爆弾だった場合に）初めて表示されるようになりま
+                    す。
+                </p>
+            </div>
+
+
+            <h4>追加部分の確認 - ピース配置メソッド直後</h4>
+            <div class="p-block">
+                <pre><code class="language-Diff">    // 参照用
+    this.panelGroup = panelGroup;
++     //* 追加：クリア判定用
++     this.oCount = 0;
+  },
++     //* 追加：画面タッチ可能な場合
++   onpointstart: function() {
++     // 再スタート
++     this.exit({
++       nextLabel: 'main',
++     });
++   },
++   //* ここまで</code></pre>
+                <p>
+                    initメソッドの最後にクリア判定用のカウンターを追加し、さらにinitメソッドの外（MainSceneクラスの
+                    直下）に、リスタート機能のためのonpointstartメソッドを新しく追加しています。
+                </p>
+                <p>
+                    これらは、それぞれ「ゲームクリア」と「ゲームオーバー」の判定や、その後の流れを制御するための重要
+                    な部品です。
+                </p>
+                <p>それでは、これらの追加部分について、一つずつ詳しく見ていきましょう。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     //* 追加：クリア判定用
++     this.oCount = 0;</code></pre>
+                <p>
+                    initメソッドの最後に、this.oCountという新しいプロパティを追加し、初期値として0を設定していま
+                    す。
+                </p>
+                <p>
+                    これは、開かれたパネルの数を数えるためのカウンターです。oCountは "open count" の略だと考えると
+                    分かりやすいでしょう。
+                </p>
+                <p>
+                    initメソッドが実行されるゲーム開始時点では、まだパネルは一つも開かれていないため、0で初期化して
+                    おきます。
+                </p>
+                <p>
+                    後ほど、openPanelメソッドの中でパネルが1枚開かれるたびに、このカウンターの値を1ずつ加算してい
+                    きます。そして、このoCountの値が「爆弾ではないパネルの総数」と一致した瞬間に、ゲームクリアとな
+                    るわけです。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     //* 追加：画面タッチ可能な場合
++   onpointstart: function() {</code></pre>
+                <p>MainSceneクラスに、onpointstartという新しいメソッドを追加しています。</p>
+                <p>
+                    個々のパネルが持っていたonpointstartが「パネルがクリックされた時」の処理だったのに対し、
+                    MainSceneが持つこのonpointstartは、「シーン全体（背景など、パネル以外の部分）がクリックされた
+                    時」に実行される処理を定義します。
+                </p>
+                <p>
+                    ゲームオーバーの後、私たちはMainSceneのsetInteractiveをtrueに戻す処理を実装します。その結果、こ
+                    のonpointstartが有効になり、「画面のどこかをタッチしてリスタート」という機能が実現できるので
+                    す。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     // 再スタート
++     this.exit({
++       nextLabel: 'main',
++     });</code></pre>
+                <p>onpointstartメソッドの中で、実際にリスタート処理を行っている部分です</p>
+                <p>
+                    this.exit()は、現在のシーン（この場合はMainScene）を終了させるための、phina.jsが用意しているメ
+                    ソッドです。
+                </p>
+                <p>引数として渡している { nextLabel: 'main' } が、シーン終了後の挙動を決定しています。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    また、nextLabelプロパティは、次に開始するシーンのラベルを指定するためのものです。ここで
+                    は'main'を指定することで、「現在のMainSceneを終了した後、もう一度'main'というラベルを持つシー
+                    ン、つまりMainScene自身を開始しなさい」という命令になります。
+                </p>
+                <p>
+                    この一連の流れにより、現在のゲーム画面がリセットされ、新しいMainSceneが最初から作り直されるた
+                    め、ゲームのリスタートが実現されるのです。
+                </p>
+            </div>
+
+
+            <h4>追加部分の確認 - パネルを開くメソッド</h4>
+            <div class="p-block">
+                <pre><code class="language-Diff">  // パネルを開く処理
+  openPanel: function(panel) {
++     //* 追加：爆弾ならゲームオーバー
++     if (panel.isBomb) {
++       Explosion().addChildTo(panel);
++       this.showAllBombs();
++       return;
++     }
++     //* ここまで
+    // 既に開かれていた何もしない
+    if (panel.isOpen) return;
+    // 開いたとフラグを立てる
+    panel.isOpen = true;
++     this.oCount++; //* 追加
+    // タッチ不可にする</code></pre>
+                <p>
+                    プレーヤーの行動に応じて勝敗を判定するため、openPanelメソッドの冒頭部分に2つの処理を追加してい
+                    ます。
+                </p>
+                <p>ひとつは、クリックしたパネルが爆弾だった場合にゲームオーバーとする処理です。</p>
+                <p>
+                    もうひとつは、パネルが無事に開かれた場合に、ゲームクリアを判定するためのカウンター
+                    （this.oCount）の数を1つ増やす処理です。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    これまで「ただパネルが開くだけ」だったこのメソッドに、ゲームとしてのルールが加わりました。それで
+                    は、これらの追加部分を詳しく見ていきましょう。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     //* 追加：爆弾ならゲームオーバー
++     if (panel.isBomb) {</code></pre>
+                <p>
+                    openPanelメソッドの処理が始まった直後に、まずこのif文で「クリックされたパネルが爆弾かどうか」を
+                    判定しています。
+                </p>
+                <p>
+                    panel.isBombプロパティがtrueだった場合、それはプレイヤーが爆弾のマスをクリックしてしまったこと
+                    を意味します。
+                </p>
+                <p>その場合、{}の中に書かれたゲームオーバーのための一連の処理が実行されることになります。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+       Explosion().addChildTo(panel);
++       this.showAllBombs();
++       return;</code></pre>
+                <p>ifブロックの中で、ゲームオーバーのための一連の処理を記述しています。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    最初の Explosion().addChildTo(panel) は、後ほど定義するExplosionクラス（爆発エフェクト）のオブ
+                    ジェクトを生成し、クリックされたpanelの子要素として追加しています。これにより、爆弾を踏んだパネ
+                    ル上で爆発のアニメーションが表示されます。
+                </p>
+                <p>
+                    次の this.showAllBombs() は、この後で作成する、盤面に隠されているすべての爆弾を表示するための新
+                    しいメソッドを呼び出しています。
+                </p>
+                <p>
+                    そして最後の return; が非常に重要です。ゲームオーバーが確定したので、このreturn;によって
+                    openPanelメソッドの処理を<strong>ここで完全に中断</strong>します。これにより、この後にあるパネルを開いたり、数
+                    字を表示したりする処理が一切実行されるのを防いでいます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     this.oCount++; //* 追加</code></pre>
+                <p>
+                    ゲームオーバー判定と、二重開封防止のガード節を無事に通過した、つまり「まだ開かれていない、安全な
+                    パネル」が開かれた場合に、この処理が実行されます。
+                </p>
+                <p>
+                    this.oCount++ は、initメソッドで0に初期化したカウンター this.oCount の値を1増やす、という意味で
+                    す。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    この一行は、元の参考サイトでは解説が省略されていましたが、開かれたパネルの数を正確に数えるために
+                    不可欠な処理です。
+                </p>
+                <p>
+                    パネルが1枚開かれるたびにこのカウンターを増やしていくことで、initメソッドの中で追加したゲームク
+                    リア判定（if (self.oCount === ...)）が正しく機能するようになります。
+                </p>
+            </div>
+
+
+            <h4>爆弾をすべて表示するメソッド (showAllBombs) の追加</h4>
+            <div class="p-block">
+                <pre><code class="language-javascript">  //* 追加：爆弾を全て表示する
+  showAllBombs: function() {
+    var self = this;
+
+    this.panelGroup.children.each(function(panel) {
+      panel.setInteractive(false);
+
+      if (panel.isBomb) {
+        Bomb().addChildTo(panel);
+        panel.tweener.clear().scaleTo(1.2, 100)
+                     .scaleTo(1.0, 100)
+                     .call(function() {
+                        // ラベル表示
+                        Label({
+                          text: 'TOUCH TO RESTART',
+                          fill: '#ffffff', // 文字色 ≒'white'
+                        }).addChildTo(self).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));
+                        // 画面をタッチ可能に
+                        self.setInteractive(true);
+                     });
+      }
+    });
+  },
+  //* ここまで</code></pre>
+                <p>MainSceneに、showAllBombsという新しいメソッドを追加しています。</p>
+                <p>
+                    このメソッドは、先ほどopenPanelのゲームオーバー処理の中から呼び出しました。その名の通り、盤面
+                    に隠されているすべての爆弾を表示し、プレイヤーに敗北を知らせる演出を担当します。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    具体的には、まず90個すべてのパネルをループでチェックし、操作不能な状態にします。その中で、もし
+                    パネルが爆弾だった場合は、Bombオブジェクトを表示し、短いアニメーションでプレイヤーの注意を引き
+                    ます。
+                </p>
+                <p>
+                    そして、アニメーションが終わったタイミングで「TOUCH TO RESTART」というメッセージを表示し、
+                    画面全体をクリックしてリスタートできる状態に移行させます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>それでは、このゲームオーバー演出の流れを、詳しく見ていきましょう。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">  //* 追加：爆弾を全て表示する
+  showAllBombs: function() {
+    var self = this;</code></pre>
+                <p>
+                    まず、openPanelメソッドの中で呼び出したthis.showAllBombs()の、showAllBombsメソッド本体をこ
+                    こで定義しています。
+                </p>
+                <p>そして、メソッドの最初に、これまでの解説でも登場した「おまじない」を記述しています。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    この後で使う.each()や.call()といったコールバック関数の中では、thisがMainSceneを指さなくなってし
+                    まいます。そのため、あらかじめMainScene自身を指しているthisを、変数selfに退避させています。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">    this.panelGroup.children.each(function(panel) {
+      panel.setInteractive(false);</code></pre>
+                <p>
+                    まず、this.panelGroup.childrenで90個すべてのパネルが格納された配列にアクセスし、.each()メソッ
+                    ドでパネルを一つずつ順番に処理していきます。
+                </p>
+                <p>そして、ループの中で、すべてのパネルに対してsetInteractive(false)を実行しています。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    ゲームオーバーが確定したので、プレイヤーがこれ以上他のパネルをクリックできないように、盤面全体を
+                    フリーズ（操作不能に）させるための処理です。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">      if (panel.isBomb) {
+        Bomb().addChildTo(panel);</code></pre>
+                <p>
+                    まず、ループの中で、今チェックしているパネルが爆弾かどうか（isBombプロパティがtrueか）を判定し
+                    ています。
+                </p>
+                <p>
+                    ループの中では、もしそのパネルが爆弾だった場合、Bombクラスのオブジェクトを生成し、そのパネルの
+                    子要素として追加します。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>これにより、これまで隠されていたすべての爆弾が、盤面上で一斉に姿を現すことになります。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">        panel.tweener.clear().scaleTo(1.2, 100)
+                     .scaleTo(1.0, 100)
+                     .call(function() {</code></pre>
+                <p>爆弾を表示した後、さらにプレイヤーの注意を引くための短いアニメーションを加えています。</p>
+            </div>
+            <div class="p-block">
+                <p>ここでは、メソッドチェーンを使って、以下のアニメーションを順番に実行しています。</p>
+                <ul>
+                    <li>
+                        .clear()：以前もし何かアニメーションが設定されていた場合に備え、それを一旦すべてリセットし
+                        ます。
+                    </li>
+                    <li>.scaleTo(1.2, 100)：100ミリ秒（0.1秒）かけて、パネルの大きさを1.2倍に拡大します。</li>
+                    <li>.scaleTo(1.0, 100)：次に、100ミリ秒かけて、パネルの大きさを元のサイズ（1.0倍）に戻します。</li>
+                </ul>
+                <p>
+                    この2つの.scaleToの連続実行により、爆弾パネルが「<strong>ブルッ</strong>」と一度だけ震えるような、小気味よいアニ
+                    メーションが実現されます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    そして最後の .call(function() { ... })は、上記のすべてのアニメーションが完了した<strong>後</strong>に、引数として渡
+                    された関数を実行しなさい、という命令です。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">                        // ラベル表示
+                        Label({
+                          text: 'TOUCH TO RESTART',
+                          fill: '#ffffff', // 文字色 ≒'white'
+                        }).addChildTo(self).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));</code></pre>
+                <p>爆弾のアニメーションがすべて完了したタイミングで、この処理が実行されます。</p>
+                <p>まず、Labelクラスを使い、「TOUCH TO RESTART」というテキストを表示しています。</p>
+                <p>このコードは、ゲームクリア時に「GOOD JOB!」というラベルを表示した時と、ほとんど同じです。</p>
+                <p>
+                    textプロパティに表示したい文字列を指定し、.addChildTo(self)でMainSceneに追加、そして
+                    .setPosition()で、以前と同じ計算式を使って盤面の下にある余白スペースの中央に配置しています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    これにより、プレイヤーにゲームが終了したことと、次のアクション（画面タッチでリスタート）を明確に
+                    伝えます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">                        // 画面をタッチ可能に
+                        self.setInteractive(true);</code></pre>
+                <p>
+                    リスタートメッセージを表示した後、MainScene自身のインタラクティブ状態をtrue（ON）に切り替えて
+                    います。
+                </p>
+                <p>
+                    initメソッドの冒頭で、私たちはthis.setInteractive(false)を実行し、ゲームプレイ中はシーン自体がクリ
+                    ックに反応しないように設定しました。
+                </p>
+                <p>ここでその設定をtrueに戻すことで、初めてMainSceneが持つonpointstartメソッドが有効になります。</p>
+                <p>
+                    これにより、プレイヤーが画面のどこかをタッチすると、先ほど定義したリスタート処理（this.exit(
+                    nextLabel: 'main' })）が実行されるようになるのです。
+                </p>
+            </div>
+
+
+            <h4>爆破クラス (Explosion) の追加</h4>
+            <div class="p-block">
+                <pre><code class="language-javascript">//* 追加：爆発クラス
+phina.define('Explosion', {
+  // StarShapeを継承
+  superClass: 'StarShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        radius: (PANEL_SIZE + 5) / 2,
+        sides: 10,
+        sideIndent: 0.75,
+        rotation: 15,
+        fill: '#ff0000', // 塗りつぶし色 ≒'red'
+        stroke: '#ffff00', // 枠の色 ≒'yellow'
+      });
+    },
+});
+//* ここまで</code></pre>
+                <p>
+                    最後に、ゲームオーバー時に表示される爆発エフェクトの見た目を定義する、新しいExplosionクラスを作
+                    成します。
+                </p>
+                <p>このクラスの基本的な構造は、これまでに作成したPanelクラスやBombクラスとよく似ています。</p>
+                <p>
+                    phina.defineでクラスを定義し、superClassで親クラスを継承、initコンストラクタの中でsuperInitを呼
+                    び出して、オブジェクトの基本的な見た目を設定しています。
+                </p>
+                <p>
+                    今回は、親クラスとしてphina.jsが用意している**StarShape（星形）**を継承することで、ギザギザとし
+                    た爆発らしい形を手軽に実現しています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    それでは、superInitに渡しているプロパティが、それぞれどのような意味を持っているのかを詳しく見て
+                    いきましょう。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">//* 追加：爆発クラス
+phina.define('Explosion', {
+  // StarShapeを継承
+  superClass: 'StarShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        ...
+      })
+    },
+});</code></pre>
+                <p>
+                    まず、これまでのクラスと同様に、phina.defineを使ってExplosionという名前の新しいクラスを定義し
+                    ています。
+                </p>
+                <p>
+                    次に、親クラスとして、phina.jsが標準で用意しているStarShape（星形を描画するクラス）を継承してい
+                    ます。
+                </p>
+                <p>
+                    RectangleShapeが四角形、CircleShapeが円を描画したように、StarShapeを継承することで、私たちは
+                    複雑な計算をすることなく、手軽にギザギザとした星形のオブジェクトを作ることができます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    最後に、initコンストラクタの中で、superInitを呼び出し、この星形の具体的な見た目（大きさや色な
+                    ど）を設定していきます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">        radius: (PANEL_SIZE + 5) / 2,
+        sides: 10,
+        sideIndent: 0.75,
+        rotation: 15,
+        fill: '#ff0000', // 塗りつぶし色 ≒'red'
+        stroke: '#ffff00', // 枠の色 ≒'yellow'</code></pre>
+                <p>initコンスト-ラクタの中で、superInitを呼び出し、StarShapeの見た目を設定しています。</p>
+                <p>
+                    StarShapeには、星の形をカスタマイズするための、いくつかのユニークなプロパティが用意されていま
+                    す。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    radius: (PANEL_SIZE + 5) / 2 で星の外側の頂点までの半径を指定します。ここでは、パネルのサイズよ
+                    り少しだけ大きい半径に設定することで、パネル全体を覆うような大きさの爆発エフェクトにしています。
+                </p>
+                <p>
+                    sides: 10 で星の頂点の数を指定します。5にすれば五芒星に、今回は10にすることで、よりギザギザの多
+                    い形にしています。
+                </p>
+                <p>
+                    sideIndent: 0.75 で星の谷の深さを、0から1の間の割合で指定します。値が1に近いほど、鋭く尖った星形
+                    になります。
+                </p>
+                <p>
+                    rotation: 15 で星全体の初期回転角度を度数法で指定します。0だと頂点が真上に来ますが、少し回転させ
+                    ることで、よりランダムな爆発の印象を与えます。
+                </p>
+                <p>
+                    fill: 'red', stroke: 'yellow' で最後に、塗りつぶし色を赤色（#ff0000 ≒ red）、枠線の色を黄色
+                    （#ffff00 ≒ yellow）に設定し、いかにも爆発らしい、派手な見た目に仕上げています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>これで、ゲームオーバーとゲームクリアの要素が実装され、ゲームとして遊べるレベルまで完成しました。</p>
+                <p>
+                    さて、これまでの長い道のり、お疲れ様でした。次のステップでは、マインスイーパではかかせないマーク
+                    機能を追加します。マーク機能とは、自分で爆弾と判断したパネルをマークして開けないようにする機能
+                    のことです。
+                </p>
+            </div>
+
+
+
+
+
+
 
 
             <!-- ここまでで本文終了 -->
