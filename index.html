@@ -39,7 +39,7 @@
                 </p>
             </div>
 
-            <img src="TemporaryIMG.jpg" alt="制作したマインスイーパの画像" width="90%" />
+            <img src="image\Minesweeper.png" alt="制作したマインスイーパの画像" width="60%" />
 
             <div class="p-block">
                 <p>
@@ -4161,8 +4161,8 @@ phina.main(function() {
 +       // ラベル表示
 +       Label({
 +         text: 'GOOD JOB!',
-+         fill: 'white',
-+       }).addChildTo(this).setPosition(320, 700);
++         fill: '#ffffff', // 文字色 ≒'white'
++       }).addChildTo(this).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));
 +       // パネルを選択不可に
 +       this.panelGroup.children.each(function(panel) {
 +         panel.setInteractive(false);
@@ -4250,13 +4250,340 @@ phina.main(function() {
                 <p>これから、この{ ... }の中で、ゲームのモードを切り替えるための具体的なロジックを記述していきます。</p>
             </div>
 
+            <div class="code-block">
+                <pre><code class="language-Diff">+         // モード変更
++         if (self.mode === 'normal') {
++           this.fill = '#19E5A1'; // 塗りつぶし色 ≒ hsl(160, 80%, 50%)
++           self.mode = 'mark';
++         }</code></pre>
+                <p>.onpushの処理の中で、まず現在のゲームモードが'normal'（通常モード）かどうかを判定しています。</p>
+                <p>
+                    条件に一致した場合、つまり通常モードの時にボタンが押された場合は、以下の2つの処理でゲームを「マ
+                    ークモード」に移行させます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    まず、this.fillのthisは、この場合Buttonオブジェクト自身を指します。ボタンの塗りつぶし色を明るい青
+                    緑色に変更することで、プレイヤーに「現在マークモードである」ことを<strong>視覚的に</strong>伝えています。
+                </p>
+                <p>
+                    次に、MainSceneが持つmodeプロパティの値を'mark'に書き換えます。これにより、次からパネルがク
+                    リックされた際には、onpointstartの中のif (self.mode === 'mark')の条件がtrueになり、マークを付け
+                    る処理が実行されるようになります。
+                </p>
+            </div>
 
+            <div class="code-block">
+                <pre><code class="language-Diff">+         else {
++           this.fill = 'silver';
++           self.mode = 'normal';
++         }</code></pre>
+                <p>
+                    このelseブロックは、if (self.mode === 'normal')の条件に一致しなかった場合、つまり現在のモードが
+                    「マークモード (mark)」だった場合に実行されます。
+                </p>
+                <p>この中では、先ほどのifブロックとちょうど逆の処理を行い、ゲームを「通常モード」に戻しています。</p>
+                <p>まず、ボタンの色を元の銀色に戻し、プレイヤーに「通常モードに戻った」ことを視覚的に伝えます。</p>
+                <p>
+                    次に、MainSceneが持つmodeプロ-パティの値を'normal'に戻します。これにより、次からパネルがクリ
+                    ックされた際には、onpointstartの中のelseブロックが実行され、パネルを開く処理が行われるようになり
+                    ます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     //* 追加：マークの数
++     this.markCount = 0;</code></pre>
+                <p>
+                    initメソッドの最後に、this.markCountという新しいプロパティを追加し、初期値として0を設定していま
+                    す。
+                </p>
+                <p>
+                    これは、this.oCount（開いたパネルの数）と同様に、<strong>盤面上に設置されているマークの総数を数えるため
+                        のカウンター</strong>です。
+                    </p>
+                <p>ゲームが開始された直後は、まだマークは一つも置かれていないため、0で初期化しておきます。</p>
+                <p>
+                    このthis.markCountカウンターは、panel.onpointstartの中で、マークの設置上限（BOMB_NUM）を超
+                    えていないかをチェックするために使われます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+   //* 追加：クリア判定
++   checkClear: function() {
++     if (this.oCount === PANEL_NUM_X * PANEL_NUM_Y - BOMB_NUM) {</code></pre>
+                <p>MainSceneに、checkClearという新しいメソッドを追加しています。</p>
+                <p>
+                    これは、以前panel.onpointstartの中に直接記述していたゲームクリア判定のロジックを、独立したメソ
+                    ッドとして<strong>リファクタリング</strong>（整理整頓）したものです。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>if (this.oCount === PANEL_NUM_X * PANEL_NUM_Y - BOMB_NUM) { ... }</p>
+                <p>メソッドの中身は、以前と全く同じif文です</p>
+                <p>
+                    this.oCount（開かれたパネルの数）と、「爆弾ではないパネルの総数」を比較し、両者が等しくなった瞬
+                    間にゲームクリアと判定します。
+                </p>
+                <p>
+                    元の参考サイトでは、この部分の詳しい解説は省略されていましたが、ここではその役割を詳しく見ていき
+                    ましょう。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    このように、特定の役割を持つ処理を独立したメソッドに切り出すことで、panel.onpointstartは「パネ
+                    ルがクリックされた際の処理の振り分け」という役割に専念でき、コード全体がより整理され、読みやすく
+                    なります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+       // ラベル表示
++       Label({
++         text: 'GOOD JOB!',
++         fill: '#ffffff', // 文字色 ≒'white'
++       }).addChildTo(this).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));</code></pre>
+                <p>if文の条件を満たした場合、つまりゲームクリアが確定した際に、この処理が実行されます。</p>
+                <p>Labelクラスを使って、「GOOD JOB!」というクリアメッセージを表示しています。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    このコードは、ゲームオーバー時に「TOUCH TO RESTART」と表示した時とほとんど同じパターンで
+                    す。
+                </p>
+                <p>
+                    Labelを生成してMainSceneに追加し、.setPosition()で、以前と同じ計算式を使って盤面の下にある余白
+                    スペースの中央に配置しています。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+       // パネルを選択不可に
++       this.panelGroup.children.each(function(panel) {
++         panel.setInteractive(false);
++       });</code></pre>
+                <p>クリアメッセージを表示した後、盤面上のすべてのパネルを操作不能な状態にしています。</p>
+                <p>この処理も、ゲームオーバー時にshowAllBombsメソッドの中で行ったものと全く同じです。</p>
+                <p>
+                    this.panelGroup.children.eachで90個すべてのパネルをループ処理し、一つ一つのパネルに対して
+                    panel.setInteractive(false)を実行することで、それ以上クリックできないようにしています。
+                </p>
+                <p>これにより、ゲームが終了した後に、プレイヤーが誤ってパネルを操作してしまうのを防ぎます。</p>
+            </div>
+
+
+            <h4>追加部分の確認 - パネルを開くメソッド</h4>
+            <div class="p-block">
+                <pre><code class="language-Diff">  // パネルを開く処理
+  openPanel: function(panel) {
++     //* 追加：マークされていたら何もしない
++     if (panel.isMark) return;
+    // 爆弾ならゲームオーバー
+    if (panel.isBomb) {
+      Explosion().addChildTo(panel);
+      this.showAllBombs();
+      return;
+    }</code></pre>
+                <p>openPanelメソッドの冒頭に、一行だけコードが追加されました。</p>
+                <p>
+                    これは、今回のセッションで実装した「マーク機能」を、パネルを開く処理に反映させるための、非常に重
+                    要な変更です
+                </p>
+                <p>この一行があることで、「マークが付けられたパネルは開けない」という、マインスイーパの基本的なルールが実現されます。</p>
+            </div>
+            <div class="p-block">
+                <p>それでは、この追加されたガード節が、どのような役割を果たしているのかを詳しく見ていきましょう。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     //* 追加：マークされていたら何もしない
++     if (panel.isMark) return;</code></pre>
+                <p>openPanelメソッドの冒頭に、新しいガード節を追加しています。</p>
+                <p>
+                    これは、<strong>「もし、クリックされたパネルにマークが付けられていたら（panel.isMarkがtrueなら）、この
+                    先の処理は一切行わずに、ここでメソッドを終了しなさい」</strong>という命令です。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>マインスイーパの重要なルールである「マークしたパネルは、誤って開いてしまわないように保護される」という機能を、この一行で実現しています。</p>
+                <p>
+                    このガード節が、爆弾判定のif (panel.isBomb)よりも先に判定されることで、たとえ爆弾のマスであって
+                    も、マークさえ付けておけばゲームオーバーにならない、という安全装置の役割も果たします。
+                </p>
+            </div>
+
+            <h4>追加部分の確認 - Panel_initメソッド</h4>
+            <div class="p-block">
+                <pre><code class="language-Diff">    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        width: PANEL_SIZE,
+        height: PANEL_SIZE,
+        fill: '#c0c0c0', // 塗りつぶし色 ≒'silver'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+        cornerRadius: 2, // 角の丸み
+      });
++       //* 追加：開かれているかどうか
++       this.isOpen = false;
++       // マークつけれているかどうか
++       this.isMark = false;
++       // タッチ有効化
++       this.setInteractive(true);
++       // ここまで
+    },</code></pre>
+                <p>Panelクラスのinitメソッドに、いくつかのプロパティの初期設定処理を追加しています。</p>
+                <p>この部分は、元の参考サイトでは詳しい解説が省略されていましたが、オブジェクト指向の設計を理解する上で非常に重要なポイントなので、ここで詳しく解説します。</p>
+            </div>
+            <div class="p-block">
+                <p>これらは、これまでMainScene側のパネル配置ループの中で設定していましたが、Panelクラス自身の初期化処理に記述を移動させる<strong>リファクタリング</strong>（コードの整理整頓）を行いました。</p>
+                <p>「パネル」に関する初期設定は、「Panelクラス」自身が責任を持つことで、役割分担が明確になり、より見通しの良いコードになります。</p>
+            </div>
+            <div class="p-block">
+                <p>それでは、追加された3つの初期設定について、詳しく見ていきましょう。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+       //* 追加：開かれているかどうか
++       this.isOpen = false;</code></pre>
+                <p>まず、this.isOpenプロパティを追加し、初期値としてfalseを設定しています。</p>
+                <p>これは、MainSceneのループ内で行っていたのと全く同じ処理です。</p>
+                <p>パネルが生成された直後は、必ず「開かれていない」状態であってほしいので、Panelクラス自身の初期化処理の中で、false（開かれていない）を設定しています。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+       // マークつけれているかどうか
++       this.isMark = false;</code></pre>
+                <p>続いて、this.isMarkという新しいプロパティを追加し、初期値としてfalseを設定しています。</p>
+                <p>これが、そのパネルが**「マークされているか、否か」という状態を管理するための目印（フラグ）**になります。</p>
+                <p>isOpenプロパティと同様に、パネルが生成された直後は、まだマークは付けられていないため、ここでfalse（マークされていない）を初期値として設定しておきます。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+       // タッチ有効化
++       this.setInteractive(true);
++       // ここまで</code></pre>
+                <p>最後に、this.setInteractive(true)を実行しています。</p>
+                <p>これも、MainSceneのループ内で行っていた処理の移動（リファクタリング）です。</p>
+            </div>
+            <div class="p-block">
+                <p>そもそも、「パネル」という部品は、プレイヤーにクリック（タッチ）されることが前提のオブジェクトです。</p>
+                <p>そのため、「パネルが生成された時点で、クリック可能な状態にしておく」という初期設定を、Panelクラス自身のinitメソッドに記述しておくのが、最も自然で分かりやすい設計と言えます。</p>
+            </div>
+
+            <h4>マーククラス (Mark) の追加</h4>
+            <div class="p-block">
+                <pre><code class="language-javascript">//* 追加：マーククラス
+phina.define('Mark', {
+  // RectangleShapeを継承
+  superClass: 'RectangleShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        width: PANEL_SIZE / 10,
+        height: PANEL_SIZE,
+        fill: '#ff0000', // 塗りつぶし色 ≒'red'
+        stroke: '#ff0000', // 枠の色 ≒'red'
+        rotation: 45,
+      });
+      
+      CircleShape({
+        width: PANEL_SIZE,
+        height: PANEL_SIZE,
+        fill: "transparent", // 塗りつぶし色 ＝ 透明
+        stroke: '#ff0000', // 枠の色 ≒'red'
+        strokeWidth: PANEL_SIZE / 10,
+      }).addChildTo(this);
+    },
+});
+//* ここまで</code></pre>
+                <p>最後に、パネルに表示されるマーク（旗印）の見た目を定義する、新しいMarkクラスを追加します。</p>
+                <p>このクラスも、元の参考サイトでは詳しい解説が省略されていましたが、ゲームの視覚的な品質を高める上で重要な要素なので、ここで詳しく解説していきます。</p>
+            </div>
+            <div class="p-block">
+                <p>このMarkクラスの構造は、以前作成したBombクラスと非常によく似ています。</p>
+                <p>親クラスを継承し、initコンストラクタの中で、複数の図形パーツ（今回はRectangleShapeとCircleShape）を組み合わせて、一つの複雑な形（禁止マークのような形）を作り上げています。</p>
+            </div>
+            <div class="p-block">
+                <p>それでは、このMarkクラスが、どのようにしてあのマークの形を作っているのか、その中身を詳しく見ていきましょう。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">//* 追加：マーククラス
+phina.define('Mark', {
+  // RectangleShapeを継承
+  superClass: 'RectangleShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        ...
+      });</code></pre>
+                <p>まず、phina.defineを使ってMarkという名前の新しいクラスを定義しています。</p>
+                <p>次に、親クラスとして、RectangleShape（四角形）を継承しています。</p>
+            </div>
+            <div class="p-block">
+                <p>これから作るマークは、禁止マークのような「円に斜線」という形ですが、その<strong>中心にある斜線</strong>を、この親クラスであるRectangleShape自身に描画させる、という設計になっています。</p>
+                <p>そして、initコンスト-ラクタの中で、具体的な見た目の設定を行っていきます。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">        width: PANEL_SIZE / 10,
+        height: PANEL_SIZE,
+        fill: '#ff0000', // 塗りつぶし色 ≒'red'
+        stroke: '#ff0000', // 枠の色 ≒'red'
+        rotation: 45,</code></pre>
+                <p>initコンストラクタの中で、親クラスであるRectangleShapeの初期化を行い、マークの中心にある斜線の見た目を設定しています。</p>
+                <ul>
+                    <li>width: PANEL_SIZE / 10, height: PANEL_SIZE：幅をパネルサイズの1/10、高さをパネルサイズいっぱいにすることで、<strong>縦に細長い長方形</strong>を作ります。</li>
+                    <li>fill: 'red', stroke: 'red'：塗りつぶし色と枠線の色を、両方とも赤色（#ff0000 ≒ red）に設定しています。</li>
+                    <li>rotation: 4：この縦長の長方形を45度回転させます。これにより、長方形が「＼」のような斜線として表示されるようになります。</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-javascript">      CircleShape({
+        width: PANEL_SIZE,
+        height: PANEL_SIZE,
+        fill: "transparent", // 塗りつぶし色 ＝ 透明
+        stroke: '#ff0000', // 枠の色 ≒'red'
+        strokeWidth: PANEL_SIZE / 10,
+      }).addChildTo(this);</code></pre>
+                <p>最後に、マークの外枠となる円のパーツを作成し、Markオブジェクト自身に追加しています。</p>
+                <p>CircleShapeを使っていますが、ここでは少し特殊な方法で円を描いています。</p>
+                <ul>
+                    <li>width: PANEL_SIZE, height: PANEL_SIZE：radius（半径）で指定する代わりに、widthとheightで円の大きさを指定しています。</li>
+                    <li>fill: "transparent"：<strong>重要なポイント</strong> 塗りつぶし色を"transparent"（透明）に設定することで、円の内側を透明にし、背景が見えるようにしています。</li>
+                    <li>stroke: 'red', strokeWidth: PANEL_SIZE / 10：stroke（枠線）の色を赤（#ff0000 ≒ red）に、strokeWidth（枠線の太さ）をパネルサイズの1/10に設定します。</li>
+                </ul>
+            </div>
+            <div class="p-block">
+                <p>これにより、「<strong>内側が透明で、太い赤色の枠線だけを持つ円</strong>」が描画されます。</p>
+                <p>この円と、先ほど作成した斜線（RectangleShape）が組み合わされることで、最終的に禁止マークのような見た目が完成するのです。</p>
+            </div>
+            <div class="p-block">
+                <p>これで、マークを付けることができるようになり、ようやくマインスイーパらしくなりました。</p>
+                <p>さて、最後にまとめに入ります。</p>
+            </div>
+
+            <h2><i class="fa-solid fa-link"></i> まとめ <i class="fa-solid fa-link"></i></h2>
+            <div class="p-block">
+                <p>以上で、JavaScriptでのゲーム開発のすゝめは終了です。お疲れさまでした。</p>
+                <p>今、あなたの手元には、基本的なルールで遊べるマインスイーパが完成しているはずです。しかし、これはゴールであると同時に、新たなスタート地点でもあります。</p>
+                <p>ここから、このゲームをさらに面白くするためのアイデアは無限にあります。例えば、<strong>右クリックや長押しでのマーク機能</strong>。例えば、<strong>クリアタイムを競うタイマー</strong>。例えば、<strong>ゲームを盛り上げる効果音</strong>など。</p>
+                <p>さらに言えば、このままでは最初のクリックで爆弾を選んでしまうかもしれません。そんなコードの改善点を見つけ、よりバグの起こりにくいプログラムに仕上げていくのも、素晴らしい学習になるでしょう。</p>
+                <p>もちろん、ここで得た知識を武器に、全く別のゲーム制作に挑戦するのも良いでしょう。そして、ある程度自信がついたら、JavaScript以外の言語の世界を覗いてみるのも、あなたの可能性を大きく広げるはずです。</p>
+                <p>このチュートリアルが、あなたのプログラミング学習の確かな一歩となったことを願っています。</p>
+            </div>
 
 
 
 
             <div class="production-time">
-                <p >（現時点の）制作時間：53時間</p>
+                <p >（現時点の）制作時間：55時間</p>
             </div>
             <!-- ここまでで本文終了 -->
 
