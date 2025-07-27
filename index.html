@@ -2533,7 +2533,7 @@ phina.main(function() {
 
             <p>
                 以下は、ゲームオーバーとゲームクリアの処理のために、これまでのコードにいくつかの追加と、それに伴う変更を加えた
-                コードです。これまでと同様、コード内の//* 追加や//* 変更と書かれた部分が、今回の変更点です。
+                コードです。これまでと同様、コード内の//* 追加や//* 変更、そして追加で//* 削除 等と書かれた部分が、今回の変更点です。
             </p>
             <pre><code class="language-javascript">// phina.js をグローバル領域に展開
 phina.globalize();
@@ -3486,12 +3486,777 @@ phina.define('Explosion', {
             </div>
 
 
+            <h3>マーク機能の追加</h3>
+            <div class="p-block">
+                <p>
+                    ここでは、下のスクリーンショットのように、マーク機能を追加していきます。
+                </p>
+            </div>
+            <div class="p-block">
+
+            <img src="image\put_mark.png" alt="マークを貼ったスクリーンショット" width="40%" />
+
+            <div class="p-block">
+                <p>
+                    以下は、マーク機能の追加と処理のために、これまでのコードにいくつかの追加と、それに伴う変更を加え
+                    たコードです。これまでと同様、コード内の//* 追加や//* 変更、//* 削除 等と書かれた部分が、今回の変
+                    更点です。
+                </p>
+                <pre><code class="language-javascript">// phina.js をグローバル領域に展開
+phina.globalize();
+
+// 定数
+var GRID_SIZE = 70; // グリッドのサイズ
+var SCREEN_SPACE = 10; // 画面端の空白
+var PANEL_NUM_X = 9; // 横のパネル数
+var PANEL_NUM_Y = 10; // 縦のパネル数
+var PANEL_MARGIN_RATIO = 1.3; // 画面縦の空白の割合
+var PANEL_SIZE_RATIO = 0.9; // パネル大きさの割合
+var BOMB_NUM = 10; // 爆弾数
+var SCREEN_WIDTH = GRID_SIZE * PANEL_NUM_X + SCREEN_SPACE// 画面横サイズ
+var SCREEN_HEIGHT = GRID_SIZE * PANEL_NUM_Y * PANEL_MARGIN_RATIO + SCREEN_SPACE; // 画面縦サイズ
+var PANEL_SIZE = GRID_SIZE * PANEL_SIZE_RATIO; // パネルの大きさ
+var PANEL_OFFSET = (GRID_SIZE + SCREEN_SPACE) / 2; // オフセット値
+
+// メインシーン
+phina.define('MainScene', {
+  superClass: 'DisplayScene',
+  // コンストラクタ
+  init: function() {
+    // 親クラス初期化
+    this.superInit({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+    });
+    // 背景色
+    this.backgroundColor = '#808080'; // 背景色 ≒'gray'
+    // タッチ不可に
+    this.setInteractive(false);
+    // グリッド
+    var grid = Grid(GRID_SIZE * PANEL_NUM_X, PANEL_NUM_X);
+    // グループ
+    var panelGroup = DisplayElement().addChildTo(this);
+    // 爆弾位置をランダムに決めた配列を作成
+    var bombs = [];
+    (PANEL_NUM_X * PANEL_NUM_Y).times(function() {
+      bombs.push(false);
+    });
+    bombs.fill(true, 0, BOMB_NUM).shuffle();
+
+    var self = this;
+    // ピース配置
+    PANEL_NUM_X.times(function(spanX) {
+      PANEL_NUM_Y.times(function(spanY) {
+        // パネル作成
+        var panel = Panel().addChildTo(panelGroup);
+        // Gridを利用して配置
+        panel.x = grid.span(spanX) + PANEL_OFFSET;
+        panel.y = grid.span(spanY) + PANEL_OFFSET;
+        // パネルに爆弾情報を紐づける
+        panel.isBomb = bombs[spanX * PANEL_NUM_Y + spanY];
+        // 開かれているかどうか
+        panel.isOpen = false;
+        // タッチ有効化
+        panel.setInteractive(true);
+        // パネルタッチ時
+        panel.onpointstart = function() {
+          //* 追加：マークモードなら
+          if (self.mode === 'mark') {
+            if (!panel.isOpen && !panel.isMark) {
+              // マーク追加
+              if (self.markCount < BOMB_NUM) {
+                Mark().addChildTo(panel);
+                panel.isMark = true;
+                self.markCount++;
+              }
+            }
+            else {
+              if (self.markCount > 0) {
+                // マーク削除
+                panel.children[0].remove();
+                panel.isMark = false;
+                self.markCount--;
+              }
+            }
+          }
+          else {
+            // パネルを開く
+            self.openPanel(panel);
+            // クリア判定
+            self.checkClear();
+          }
+        };
+      });
+    });
+    // モード
+    this.mode = 'normal';
+    //* ここまで
+    //? 移動       self.openPanel(panel);
+    //! 削除       // クリア判定
+    //! 削除       if (self.oCount === PANEL_NUM_X * PANEL_NUM_Y - BOMB_NUM) {
+    //! 削除         // ラベル表示
+    //! 削除         Label({
+    //! 削除           text: 'GOOD JOB!',
+    //! 削除           fill: '#ffffff', // 文字色 ≒'white'
+    //! 削除         }).addChildTo(self).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));
+    //! 削除         // パネルを選択不可に
+    //! 削除         self.panelGroup.children.each(function(panel) {
+    //! 削除           panel.setInteractive(false);
+    //! 削除         });
+    //! 削除       }
+    //* 追加：マークモードボタン
+    Button({
+      width: SCREEN_WIDTH / 5,
+      height: SCREEN_HEIGHT / 10,
+      text: 'Mark',
+      fill: '#c0c0c0', // 塗りつぶし色 ≒'silver'
+    }).addChildTo(this)
+      .setPosition(this.gridX.span(14), this.gridY.span(14.5))
+      .onpush = function() {
+        // モード変更
+        if (self.mode === 'normal') {
+          this.fill = '#19E5A1'; // 塗りつぶし色 ≒ hsl(160, 80%, 50%)
+          self.mode = 'mark';
+        }
+        else {
+          this.fill = '#c0c0c0', // 塗りつぶし色 ≒'silver'
+          self.mode = 'normal';
+        }
+      };
+      //* ここまで
+    // 参照用
+    this.panelGroup = panelGroup;
+    // クリア判定用
+    this.oCount = 0;
+    //* 追加：マークの数
+    this.markCount = 0;
+    },
+  //* 追加：クリア判定
+  checkClear: function() {
+    if (this.oCount === PANEL_NUM_X * PANEL_NUM_Y - BOMB_NUM) {
+      // ラベル表示
+      Label({
+        text: 'GOOD JOB!',
+        fill: '#ffffff', // 文字色 ≒'white'
+      }).addChildTo(this).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));
+      // パネルを選択不可に
+      this.panelGroup.children.each(function(panel) {
+        panel.setInteractive(false);
+      });
+    }
+  },
+  //* ここまで
+  // 画面タッチ可能な場合
+  onpointstart: function() {
+    // 再スタート
+    this.exit({
+      nextLabel: 'main',
+    });
+  },
+  // パネルを開く処理
+  openPanel: function(panel) {
+    //* 追加：マークされていたら何もしない
+    if (panel.isMark) return;
+    // 爆弾ならゲームオーバー
+    if (panel.isBomb) {
+      Explosion().addChildTo(panel);
+      this.showAllBombs();
+      return;
+    }
+    // 既に開かれていた何もしない
+    if (panel.isOpen) return;
+    // 開いたとフラグを立てる
+    panel.isOpen = true;
+    this.oCount++;
+    // タッチ不可にする
+    panel.setInteractive(false);
+
+    var bombs = 0;
+    var indexs = [-1, 0, 1];
+    var self = this;
+    // 周りのパネルの爆弾数をカウント
+    indexs.each(function(i) {
+      indexs.each(function(j) {
+        var pos = Vector2(panel.x + i * GRID_SIZE, panel.y + j * GRID_SIZE);
+        var target = self.getPanel(pos);
+        if (target && target.isBomb) bombs++;
+      });
+    });
+    // パネルに数を表示
+    panel.num = bombs === 0 ? '' : bombs;
+    Label({
+      text: panel.num,
+      fill: '#ffffff', // 文字色 ≒'white'
+    }).addChildTo(panel);
+    panel.fill = '#808080'; // 塗りつぶし色 ≒'gray'
+    // 周りに爆弾がなければ再帰的に調べる
+    if (bombs === 0) {
+      indexs.each(function(i) {
+        indexs.each(function(j) {
+          var pos = Vector2(panel.x + i * GRID_SIZE, panel.y + j * GRID_SIZE);
+          var target = self.getPanel(pos);
+          target && self.openPanel(target);
+        });
+      });
+    }
+  },
+
+  // 指定された位置のパネルを得る
+  getPanel: function(pos) {
+    var result = null;
+    
+    this.panelGroup.children.some(function(panel) {
+      if (panel.position.equals(pos)) {
+        result = panel;
+        return true;
+      }
+    });
+    return result;
+  },
+
+  // 爆弾を全て表示する
+  showAllBombs: function() {
+    var self = this;
+
+    this.panelGroup.children.each(function(panel) {
+      panel.setInteractive(false);
+
+      if (panel.isBomb) {
+        Bomb().addChildTo(panel);
+        panel.tweener.clear().scaleTo(1.2, 100)
+                     .scaleTo(1.0, 100)
+                     .call(function() {
+                        // ラベル表示
+                        Label({
+                          text: 'TOUCH TO RESTART',
+                          fill: '#ffffff', // 文字色 ≒'white'
+                        }).addChildTo(self).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));
+                        // 画面をタッチ可能に
+                        self.setInteractive(true);
+                     });
+      }
+    });
+  },
+});
+
+// パネルクラス
+phina.define('Panel', {
+  // RectangleShapeを継承
+  superClass: 'RectangleShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        width: PANEL_SIZE,
+        height: PANEL_SIZE,
+        fill: '#c0c0c0', // 塗りつぶし色 ≒'silver'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+        cornerRadius: 2, // 角の丸み
+      });
+      //* 追加：開かれているかどうか
+      this.isOpen = false;
+      // マークつけれているかどうか
+      this.isMark = false;
+      // タッチ有効化
+      this.setInteractive(true);
+      //* ここまで
+    },
+});
+
+// 爆弾クラス
+phina.define('Bomb', {
+  // Shapeを継承
+  superClass: 'Shape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        width: GRID_SIZE,
+        height: GRID_SIZE,
+        backgroundColor: 'transparent',
+      });
+      // 導線
+      RectangleShape({
+        width: PANEL_SIZE / 8,
+        height: PANEL_SIZE / 8,
+        fill: "#000088", // 塗りつぶし色 ≒'navy'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+        y: -20,
+      }).addChildTo(this);
+      // 本体
+      CircleShape({
+        radius: PANEL_SIZE / 4,
+        fill: "#000088", // 塗りつぶし色 ≒'navy'
+        stroke: '#ffffff', // 枠の色 ≒'white'
+      }).addChildTo(this);
+    },
+});
+
+// 爆発クラス
+phina.define('Explosion', {
+  // StarShapeを継承
+  superClass: 'StarShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        radius: (PANEL_SIZE + 5) / 2,
+        sides: 10,
+        sideIndent: 0.75,
+        rotation: 15,
+        fill: '#ff0000', // 塗りつぶし色 ≒'red'
+        stroke: '#ffff00', // 枠の色 ≒'yellow'
+      });
+    },
+});
+
+//* 追加：マーククラス
+phina.define('Mark', {
+  // RectangleShapeを継承
+  superClass: 'RectangleShape',
+    // コンストラクタ
+    init: function() {
+      // 親クラス初期化
+      this.superInit({
+        width: PANEL_SIZE / 10,
+        height: PANEL_SIZE,
+        fill: '#ff0000', // 塗りつぶし色 ≒'red'
+        stroke: '#ff0000', // 枠の色 ≒'red'
+        rotation: 45,
+      });
+      
+      CircleShape({
+        width: PANEL_SIZE,
+        height: PANEL_SIZE,
+        fill: "transparent", // 塗りつぶし色 ＝ 透明
+        stroke: '#ff0000', // 枠の色 ≒'red'
+        strokeWidth: PANEL_SIZE / 10,
+      }).addChildTo(this);
+    },
+});
+//* ここまで
+
+// メイン
+phina.main(function() {
+  var app = GameApp({
+    startLabel: 'main', // メイン画面からスタート
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+  });
+  app.run();
+});</code></pre>
+                <p>このコードをコピーし、 main.jsに上書き、あるいは変更点を追記してください。</p>
+            </div>
+            <div class="p-block">
+                <p>
+                    今回の実装では、画面に新しく「Mark」ボタンを設置します。このボタンを押して「マークモード」に切
+                    り替えた状態でパネルをタップすると、マークを付けたり外したりできるようになります。
+                </p>
+                <p>
+                    この機能を実装するため、今回はゲームのロジックに大きな変更が加わります。主な変更点は以下の通りで
+                    す。
+                </p>
+                <p>
+                    まず、通常の「パネルを開くモード」と「マークを付けるモード」を切り替えるための、状態管理の仕組み
+                    を追加します。
+                </p>
+                <p>そして、モードを切り替えるためのUIボタンを画面に追加します。</p>
+                <p>
+                    現在のモードに応じて、パネルをクリックした際の動作（パネルを開くか、マークを付けるか）が分岐する
+                    ように、ロジックを大幅に書き換えます。
+                </p>
+                <p>最後に、マークされているパネルは開けないように、ガード処理を追加します。</p>
+                <p>
+                    <span class="underline-orange">
+                        注： 今回のステップのコードも、参考にさせていただいたサイトのものを元にしていますが、サイト側の
+                        分割解説では省略されていた部分も含まれています。このチュートリアルでは、その部分も含めて詳しく解
+                        説していきます。
+                    </span>
+                </p>
+            </div>
+            <div class="p-block">
+                <p>それでは、追加・変更した要素がどのような役割を持っているのか、詳しく見ていきましょう。</p>
+            </div>
+
+
+            <h4>追加部分の確認 - パネルタッチ時のメソッド</h4>
+            <div class="p-block">
+                <pre><code class="language-Diff">+     //* 追加：マークモードボタン
++     Button({
++       width: 120,
++       height: 64,
++       text: 'Mark',
++       fill: '#c0c0c0', // 塗りつぶし色 ≒'silver'</code></pre>
+                <p>ここが、今回のマーク機能実装における、最も重要な変更点です。</p>
+                <p>
+                    panel.onpointstartメソッドの中身が、これまでのシンプルな処理から、ゲームの状況に応じて動作を切
+                    り替える、より複雑なロジックに大きく書き換えられています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>この機能を実現する鍵となるのが、<strong>「モード」</strong>という考え方です。</p>
+                <p>
+                    ゲームの状態として、パネルを開くための「通常モード (normal)」と、マークを付けるための「マークモ
+                    ード (mark)」を用意します。
+                </p>
+                <p>
+                    そして、パネルがクリックされた際には、まず現在のモードがどちらなのかをif文で判定し、モードに応じ
+                    て全く異なる処理を実行するように分岐させています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    具体的には、これまでopenPanelメソッドを呼び出していた部分をelseブロックに移動し、ifブロックの中
+                    にはマークを付けたり外したりするための、新しいロジックを追加しています。また、ループ処理の後で、
+                    ゲーム開始時のモードを「通常モード」に初期設定する処理も追加されました。
+                </p>
+                <p>
+                    これに伴い、これまでonpointstartの中に直接書かれていたクリア判定の処理は、別のメソッドに移動す
+                    るため削除されています。
+                </p>
+            </div>
+            <div class="p-block">
+                それでは、この新しくなったonpointstartメソッドの仕組みを、詳しく見ていきましょう。
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+           //* 追加：マークモードなら
++           if (self.mode === 'mark') {</code></pre>
+                <p>
+                    パネルがクリックされた際に、まずこのif文で、現在のゲームの「モード」が何であるかを判定していま
+                    す。
+                </p>
+                <p>
+                    self.modeは、後ほどinitメソッドの最後で定義する、現在のモードを記憶しておくためのプロパティで
+                    す。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    self.modeの値が'mark'と等しい、つまり「マークモード」だった場合にのみ、{}の中に書かれたマークを
+                    付け外しする処理が実行されます。
+                </p>
+                <p>
+                    そして、この条件に一致しない場合、つまり「通常モード (normal)」だった場合は、このifブロックはス
+                    キップされ、続くelseブロックの処理（パネルを開く処理）が実行されることになります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+             if (!panel.isOpen && !panel.isMark) {</code></pre>
+                <p>
+                    「マークモード」であることが確認された後、さらにこのif文で、クリックされたパネルがマークを追加で
+                    きる状態かどうかを判定しています。
+                </p>
+                <p>ここでは、&&（AND）演算子を使って、2つの条件を同時にチェックしています。</p>
+                <p>
+                    !（NOT）演算子は、trueとfalseを反転させます。panel.isOpenは「開かれているか」なので、
+                    !panel.isOpenは「まだ開かれていないか」という意味になります。同様に、!panel.isMarkは「まだマー
+                    クが付けられていないか」という意味になります。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    つまり、このif文は「<strong>まだ開かれておらず、かつ、まだマークも付けられていない</strong>」という、まっさらな状
+                    態のパネルである場合にのみ、{}の中に書かれたマーク追加処理に進む、という条件になっています。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+               // マーク追加
++               if (self.markCount < BOMB_NUM) {</code></pre>
+                <p>
+                    マークを追加できる状態のパネルであることが確認された後、最後にこのif文で、これ以上マークを追加し
+                    て良いかどうかを判定しています。
+                </p>
+                <p>
+                    マインスイーパのルールでは、通常、盤面にある爆弾の数までしかマークを置くことはできません。このif
+                    文は、そのルールを実装するためのものです。
+                </p>
+                <p>
+                    self.markCount（現在設置されているマークの数）が、BOMB_NUM（爆弾の総数）よりも小さい場合に
+                    のみ、{}の中に書かれたマーク追加処理が実行されます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>これにより、プレイヤーが爆弾の数を超えて、むやみにマークを乱立させてしまうのを防いでいます。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+                 Mark().addChildTo(panel);
++                 panel.isMark = true;
++                 self.markCount++;</code></pre>
+                <p>すべての条件をクリアした場合に、実際にマークを追加するための一連の処理を行っています。</p>
+                <p>
+                    最初のMark().addChildTo(panel)では、後ほど定義するMarkクラス（マークの見た目）のオブジェクト
+                    を生成し、クリックされたpanelの子要素として追加しています。これにより、パネル上にマークが表示さ
+                    れます。
+                </p>
+                <p>
+                    次のpanel.isMark = true;は、このパネルの状態を「マークされている」という状態に更新するためのも
+                    のです。isMarkプロパティは、後ほどマークを削除する際や、パネルを開こうとした際の判定に使われま
+                    す。</p>
+                <p>
+                    最後のself.markCount++;では、盤面上のマークの総数を管理しているカウンターmarkCountの値を1増
+                    やしています。このカウンターは、先ほどのif文で、マークの設置上限をチェックするために使われます。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+             else {
++               if (self.markCount > 0) {
++                 // マーク削除
++                 panel.children[0].remove();
++                 panel.isMark = false;
++                 self.markCount--;
++               }
++             }</code></pre>
+                <p>
+                    このelseブロックは、if (!panel.isOpen && !panel.isMark)の条件に一致しなかった場合、つまり「既に
+                    開かれている」または「既にマークが付けられている」パネルがクリックされた場合に実行されます。（既
+                    に開かれているパネルはインタラクティブがOFFになっているため、実際にはこのelseブロックは「既にマ
+                    ークが付けられているパネル」がクリックされた場合にのみ実行されます。）
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    マーク削除処理の前に、if (self.markCount > 0) で念のためマークの総数が0より大きいことを確認する
+                    安全装置を入れています。
+                </p>
+                <p>
+                    panel.children[0].remove(); が、マークの見た目を削除する処理です。panel.children[0]は、panelの
+                    子要素の0番目、つまり先ほどaddChildTo(panel)で追加したMarkオブジェクトを指します。.remove()
+                    メソッドを呼び出すことで、そのオブジェクトをパネル上から取り除きます。
+                </p>
+                <p>panel.isMark = false; で、パネルの状態を「マークされていない」状態に戻します。</p>
+                <p>
+                    最後に、self.markCount--; でマークの総数を管理しているカウンターmarkCountの値を1減らしていま
+                    す。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+           else {
++             // パネルを開く
++             self.openPanel(panel);
++             // クリア判定
++             self.checkClear();
++           }</code></pre>
+                <p>
+                    このelseブロックは、if (self.mode === 'mark')の条件に一致しなかった場合、つまり現在のモードが
+                    「通常モード (normal)」だった場合に実行されます。
+                </p>
+                <p>この中身は、以前のバージョンのonpointstartに書かれていた処理とほぼ同じです。</p>
+                <p>
+                    まず、self.openPanel(panel); でクリックされたpanelを引数として、openPanelメソッドを呼び出し、
+                    パネルを開く処理を実行します。
+                </p>
+                <p>
+                    次に、self.checkClear(); で後ほど定義するcheckClearという新しいメソッドを呼び出し、パネルを開い
+                    た結果、ゲームクリアの条件を満たしたかどうかを判定しています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    これまでonpointstartの中に直接記述していたクリア判定のロジックを、役割が分かりやすいように
+                    checkClearという独立したメソッドに分離した形です。これを<strong>リファクタリング</strong>と呼び、コードを整理整
+                    頓するための良い習慣です。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     // モード
++     this.mode = 'normal';
++     //* ここまで</code></pre>
+                <p>
+                    90個すべてのパネルを配置し終えた後、initメソッドの最後で、this.modeという新しいプロパティを追加
+                    し、初期値として'normal'を設定しています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    これが、先ほどのpanel.onpointstartの中で使っていた、現在のゲームモードを記憶しておくための変数
+                    の本体です。
+                </p>
+                <p>
+                    ゲームが開始された直後は、必ずパネルを開くための「通常モード (normal)」であってほしいので、ここ
+                    で初期設定を行っています。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    このthis.modeの値は、後ほど作成する「Markボタン」が押されるたびに、'normal'と'mark'の間で切り
+                    替えられることになります。
+                </p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">-     //? 移動       self.openPanel(panel);
+-     //! 削除       // クリア判定
+-     //! 削除       if (self.oCount === PANEL_NUM_X * PANEL_NUM_Y - BOMB_NUM) {
+-     //! 削除         // ラベル表示
+-     //! 削除         Label({
+-     //! 削除           text: 'GOOD JOB!',
+-     //! 削除           fill: '#ffffff', // 文字色 ≒'white'
+-     //! 削除         }).addChildTo(self).setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * (PANEL_MARGIN_RATIO + 1) / (PANEL_MARGIN_RATIO * 2));
+-     //! 削除         // パネルを選択不可に
+-     //! 削除         self.panelGroup.children.each(function(panel) {
+-     //! 削除           panel.setInteractive(false);
+-     //! 削除         });
+-     //! 削除       }</code></pre>
+                <p>
+                    最後に、以前のバージョンのonpointstartメソッドの中に直接書かれていた処理を削除（または移動）し
+                    ます。
+                </p>
+                <p>
+                    self.openPanel(panel)の呼び出しは、新しく追加したif/else文の中の、elseブロック（通常モードの場
+                    合）に移動しました。
+                </p>
+                <p>
+                    そして、それに続いていたゲームクリア判定の一連のロジックは、checkClearという新しいメソッドにそ
+                    の役割を譲るため、ここからは完全に削除されます。
+                </p>
+            </div>
+            <div class="p-block">
+                <p>
+                    このように、機能ごとに処理を適切なメソッドに分割（<strong>リファクタリング</strong>）することで、onpointstartメ
+                    ソッドは「現在のモードに応じて、適切な処理に振り分ける」という、本来の役割に専念できるようにな
+                    り、コード全体の見通しが良くなります。
+                </p>
+            </div>
+
+
+            <h4>追加部分の確認 - パネルタッチ時のメソッド直後</h4>
+            <div class="p-block">
+                <pre><code class="language-Diff">+     //* 追加：マークモードボタン
++     Button({
++       width: 120,
++       height: 64,
++       text: 'Mark',
++       fill: '#c0c0c0', // 塗りつぶし色 ≒'silver'
++     }).addChildTo(this)
++       .setPosition(this.gridX.span(14), this.gridY.span(14.5))
++       .onpush = function() {
++         // モード変更
++         if (self.mode === 'normal') {
++           this.fill = '#19E5A1'; // 塗りつぶし色 ≒ hsl(160, 80%, 50%)
++           self.mode = 'mark';
++         }
++         else {
++           this.fill = 'silver';
++           self.mode = 'normal';
++         }
++       };
++       //* ここまで
+    // 参照用
+    this.panelGroup = panelGroup;
+    // クリア判定用
+    this.oCount = 0;
++     //* 追加：マークの数
++     this.markCount = 0;
+    },
++   //* 追加：クリア判定
++   checkClear: function() {
++     if (this.oCount === PANEL_NUM_X * PANEL_NUM_Y - BOMB_NUM) {
++       // ラベル表示
++       Label({
++         text: 'GOOD JOB!',
++         fill: 'white',
++       }).addChildTo(this).setPosition(320, 700);
++       // パネルを選択不可に
++       this.panelGroup.children.each(function(panel) {
++         panel.setInteractive(false);
++       });
++     }
++   },
++   //* ここまで
+  // 画面タッチ可能な場合
+  onpointstart: function() {
+    // 再スタート
+    this.exit({
+      nextLabel: 'main',
+    });
+  },</code></pre>
+                <p>initメソッドの最後と、MainSceneクラス全体に、いくつかの重要な機能を追加しています。</p>
+                <p>これらは、今回のマーク機能実装と、それに伴うコードのリファクタリングの総仕上げとなる部分です。</p>
+            </div>
+            <div class="p-block">
+                <p>主に、以下の3つの要素が追加されています。</p>
+                <p>画面に「Mark」ボタンを配置し、クリックされた際にゲームのモードを切り替える処理を実装します。</p>
+                <p>盤面に設置されたマークの総数を管理するための、新しいカウンター変数を追加します。</p>
+                <p>これまでonpointstartの中にあったクリア判定ロジックを、独立したメソッドとして定義し直します。</p>
+            </div>
+            <div class="p-block">
+                <p>それでは、これらの追加部分について、一つずつ詳しく見ていきましょう。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+     //* 追加：マークモードボタン
++     Button({
++       width: 120,
++       height: 64,
++       text: 'Mark',
++       fill: '#c0c0c0', // 塗りつぶし色 ≒'silver'
++     }).addChildTo(this)</code></pre>
+                <p>
+                    phina.jsが標準で用意しているButtonクラスを使って、モードを切り替えるためのボタンを生成していま
+                    す。
+                </p>
+                <p>
+                    RectangleShapeやLabelの時と同様に、Button({ ... })という形で、ボタンの見た目に関する基本的なプ
+                    ロパティを設定しています。
+                </p>
+                <ul>
+                    <li>width, height: ボタンの幅と高さを指定します。</li>
+                    <li>text: ボタンの表面に表示される文字列を'Mark'に指定します。</li>
+                    <li>fill: ボタンの背景色を銀色(#c0c0c0 ≒ silver)に指定します。</li>
+                </ul>
+            </div>
+            <div class="p-block">
+                <p>そして、.addChildTo(this)で、作成したボタンをMainSceneに追加し、画面に表示させています。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+       .setPosition(this.gridX.span(14), this.gridY.span(14.5))</code></pre>
+                <p>メソッドチェーンで続け、.setPosition()を使ってボタンの表示位置を指定しています。</p>
+            </div>
+            <div class="p-block">
+                <p>ここで、this.gridXとthis.gridYという、これまで使っていなかったプロパティが登場します。</p>
+                <p>これらは、phina.jsのDisplaySceneが標準で持っている、便利なグリッドオブジェクトです。</p>
+                <ul>
+                    <li>this.gridX: 画面の<strong>横幅</strong>（this.width）を16分割したグリッドです。</li>
+                    <li>this.gridY: 画面の<strong>縦幅</strong>（this.height）を16分割したグリッドです。</li>
+                </ul>
+                <p>
+                    this.gridX.span(14)は、「画面の横幅を16分割したうちの、14番目の位置」という座標を計算してくれま
+                    す。this.gridY.span(14.5)も同様に、「画面の縦幅を16分割したうちの、14.5番目の位置」を計算しま
+                    す。
+                </p>
+                <p>
+                    これらを使うことで、SCREEN_WIDTH / 2のようなピクセル単位の直接計算をしなくても、画面サイズ
+                    に基づいた相対的な位置指定を簡単に行うことができます。</p>
+                <p>今回は、これらを使ってボタンを画面の右下に配置しています。</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code class="language-Diff">+       .onpush = function() {</code></pre>
+                <p>最後に、このボタンが押された（pushされた）時に、どのような処理を行うかを設定しています。</p>
+                <p>
+                    panelオブジェクトのクリック処理ではonpointstartを使いましたが、phina.jsのButtonクラスでは、より
+                    直感的な.onpushというプロパティが用意されています。</p>
+                <p>この.onpushにfunction() { ... }を代入しておくことで、ボタンが押された瞬間に、{}の中に書かれた処理が自動的に実行されます。</p>
+            </div>
+            <div class="p-block">
+                <p>これから、この{ ... }の中で、ゲームのモードを切り替えるための具体的なロジックを記述していきます。</p>
+            </div>
+
+
 
 
 
 
             <div class="production-time">
-                <p >（現時点の）制作時間：50時間</p>
+                <p >（現時点の）制作時間：53時間</p>
             </div>
             <!-- ここまでで本文終了 -->
 
