@@ -56,7 +56,7 @@ h4{
     font-family: "WDXL Lubrifont SC", sans-serif; /* 文字のフォント */
     font-weight: bold; /* 文字の太さ(太い) */
     font-style: normal; /* 文字の表示形式(普通) */
-    font-size: 1.5rem; /* 文字の大きさ */
+    ont-sifze: 1.5rem; /* 文字の大きさ */
 
     padding-top: 0.5rem 0rem; /* 要素内側の上下に 0.5rem、左右に 0rem の余白 */
     border-bottom: 6px double; /* 要素境界の上部に 4px の実線 */
@@ -90,6 +90,19 @@ html {
 
 .code-block p {
     margin: 0.3rem 0;
+}
+
+.production-time{
+    float: right;
+    margin: 4rem 0 0;
+}
+
+.production-time p{
+    font-size: 0.8rem;
+    font-family: "Noto Sans JP", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .row-img {
