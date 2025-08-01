@@ -111,11 +111,11 @@ html {
 
 .row-img img {
     display: inline;
-    margin: 0 0.5rem
+    margin: 0 0.5rem;
 }
 
 .cyan-strong {
-    color: #00cafe
+    color: #00cafe;
 }
 
 .underline-orange{
@@ -167,13 +167,13 @@ pre code{
     border-radius: 10px; /* コードブロックの角を丸く設定 */
 }
 .copy-button:hover{
-    background: #999
+    background: #999;
 }
 
 ul {
     list-style: none;
     padding-left: 1rem;
-    margin: 0.5rem 0
+    margin: 0.5rem 0;
 }
 
 ul li::before {
